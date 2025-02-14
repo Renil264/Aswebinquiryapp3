@@ -76,6 +76,27 @@ class _SalesReportState extends State<SalesReport> {
     }
   }
 
+  String getTotalQty() {
+    int total = _salesData.fold(0, (sum, item) => sum + int.parse(item['qty']!));
+    return total.toString();
+  }
+
+  String getTotalPrice() {
+    double total = _salesData.fold(0.0, (sum, item) {
+      String priceStr = item['price']!.replaceAll('\$', '').replaceAll(',', '');
+      return sum + double.parse(priceStr);
+    });
+    return '\$${NumberFormat('#,##0').format(total)}';
+  }
+
+  String getTotalNetPrice() {
+    double total = _salesData.fold(0.0, (sum, item) {
+      String netPriceStr = item['netPrice']!.replaceAll('\$', '').replaceAll(',', '');
+      return sum + double.parse(netPriceStr);
+    });
+    return '\$${NumberFormat('#,##0').format(total)}';
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -195,6 +216,24 @@ class _SalesReportState extends State<SalesReport> {
                         ),
                       ),
                     ),
+                    // New Totals Container
+                    Container(
+                      width: double.infinity,
+                      decoration: const BoxDecoration(
+                        color: Color(0xFFF5F5F5),
+                        border: Border(
+                          top: BorderSide(color: Color(0xFFE5E5E5), width: 1),
+                        ),
+                      ),
+                      padding: const EdgeInsets.all(16),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          _buildTotalItem('Total Quantity', getTotalQty()),
+                          _buildTotalItem('Total Price', getTotalPrice()),
+                        ],
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -204,6 +243,36 @@ class _SalesReportState extends State<SalesReport> {
       ),
     );
   }
+
+  Widget _buildTotalItem(String label, String value) {
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.center,
+    mainAxisSize: MainAxisSize.min,
+    children: [
+      Text(
+        label,
+        style: const TextStyle(
+          fontSize: 16,
+          color: Color(0xFF172B4D),
+          fontWeight: FontWeight.w500,
+        ),
+      ),
+      const SizedBox(height: 4),
+      Align(
+        alignment: Alignment.center,
+        child: Text(
+          value,
+          style: const TextStyle(
+            fontSize: 16,
+            color: Color(0xFF172B4D),
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ),
+    ],
+  );
+}
+
 
   Widget _buildDateField(DateTime? date, String placeholder) {
     return Container(
@@ -237,7 +306,7 @@ class _SalesReportState extends State<SalesReport> {
         style: const TextStyle(
           fontSize: 14,
           fontWeight: FontWeight.bold,
-          color: Color(0xFF2D3142),
+          color: Color(0xFF172B4D),
         ),
       ),
     );
@@ -255,15 +324,16 @@ class _SalesReportState extends State<SalesReport> {
     );
   }
 
-  Widget _buildTableCell(String text, {bool alignRight = false}) {
+  Widget _buildTableCell(String text, {bool alignRight = false, bool bold = false}) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
       child: Text(
         text,
         textAlign: alignRight ? TextAlign.right : TextAlign.left,
-        style: const TextStyle(
+        style: TextStyle(
           fontSize: 15,
-          color: Color(0xFF2D3142),
+          color: const Color(0xFF2D3142),
+          fontWeight: bold ? FontWeight.bold : FontWeight.normal,
         ),
         overflow: TextOverflow.ellipsis,
       ),
@@ -277,11 +347,6 @@ class _SalesReportState extends State<SalesReport> {
     {'date': '11-26-2023', 'desc': 'Pen', 'qty': '8', 'price': '\$325', 'netPrice': '\$325'},
     {'date': '11-29-2023', 'desc': 'Doll', 'qty': '0', 'price': '\$0', 'netPrice': '\$0'},
     {'date': '11-30-2023', 'desc': 'Glass', 'qty': '2', 'price': '\$6', 'netPrice': '\$6'},
-    {'date': '11-15-2023', 'desc': 'Book', 'qty': '50', 'price': '\$16,110', 'netPrice': '\$16,110'},
-    {'date': '11-20-2023', 'desc': 'Hat', 'qty': '10', 'price': '\$368', 'netPrice': '\$368'},
-    {'date': '11-22-2023', 'desc': 'Eraser', 'qty': '0', 'price': '\$345', 'netPrice': '\$345'},
-    {'date': '11-15-2023', 'desc': 'Book', 'qty': '50', 'price': '\$16,110', 'netPrice': '\$16,110'},
-    {'date': '11-20-2023', 'desc': 'Hat', 'qty': '10', 'price': '\$368', 'netPrice': '\$368'},
-    {'date': '11-22-2023', 'desc': 'Eraser', 'qty': '0', 'price': '\$345', 'netPrice': '\$345'},
+
   ];
 }
