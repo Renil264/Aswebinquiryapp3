@@ -1,6 +1,7 @@
 import 'package:antiquewebemquiry/date_range.dart';
 import 'package:antiquewebemquiry/view/home_screen/home_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 import 'package:antiquewebemquiry/viewmodel/payoutreportviewmodel.dart';
 
@@ -329,13 +330,13 @@ class _PayoutReportViewState extends State<PayoutReportView> {
           GestureDetector(
             onTap: () => _navigateToHome(context),
             child: _buildBottomNavItem(
-              imagePath: 'assets/home.png',
+              imagePath: 'assets/home.svg',
               label: 'Home',
               isSelected: false,
             ),
           ),
           _buildBottomNavItem(
-            imagePath: 'assets/report.png',
+            imagePath: 'assets/report.svg',
             label: 'Reports',
             isSelected: true,
           ),
@@ -352,7 +353,7 @@ class _PayoutReportViewState extends State<PayoutReportView> {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Image.asset(
+        SvgPicture.asset(
           imagePath,
           width: 40,
           height: 40,

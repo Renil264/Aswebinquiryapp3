@@ -2,6 +2,7 @@ import 'package:antiquewebemquiry/view/hamburger.dart';
 import 'package:antiquewebemquiry/view/salesreport.dart';
 import 'package:antiquewebemquiry/viewmodel/home_viewmodel.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
 import 'package:fl_chart/fl_chart.dart';
@@ -413,8 +414,8 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                   color: const Color(0xFF00BFA6).withOpacity(0.1),
                   shape: BoxShape.circle,
                 ),
-                child: Image.asset(
-                  'assets/trending.png',
+                child: SvgPicture.asset(
+                  'assets/trending.svg',
                   width: screenSize.width * 0.06,
                   height: screenSize.width * 0.06,
                 ),
@@ -487,8 +488,8 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          _buildNavItem('assets/home.png', 'Home', true, screenSize),
-          _buildNavItem('assets/report.png', 'Reports', false, screenSize),
+          _buildNavItem('assets/home.svg', 'Home', true, screenSize),
+          _buildNavItem('assets/report.svg', 'Reports', false, screenSize),
         ],
       ),
     );
@@ -509,7 +510,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Image.asset(
+          SvgPicture.asset(
             iconPath,
             width: iconSize,
             height: iconSize,

@@ -1,6 +1,7 @@
 import 'package:antiquewebemquiry/view/home_screen/home_screen.dart';
 import 'package:antiquewebemquiry/viewmodel/salesreportviewmodel.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 
@@ -372,13 +373,13 @@ class _SalesReportViewState extends State<SalesReportView> {
           GestureDetector(
             onTap: () => _navigateToHome(context),
             child: _buildBottomNavItem(
-              imagePath: 'assets/home.png',
+              imagePath: 'assets/home.svg',
               label: 'Home',
               isSelected: false,
             ),
           ),
           _buildBottomNavItem(
-            imagePath: 'assets/report.png',
+            imagePath: 'assets/report.svg',
             label: 'Reports',
             isSelected: false,
           ),
@@ -395,7 +396,7 @@ class _SalesReportViewState extends State<SalesReportView> {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Image.asset(
+        SvgPicture.asset(
           imagePath,
           width: 40,
           height: 40,
