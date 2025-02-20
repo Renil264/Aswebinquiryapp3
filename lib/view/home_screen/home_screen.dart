@@ -228,7 +228,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                             // View Report Button
                             Center(
                               child: SizedBox(
-                                width: isTablet ? screenSize.width * 0.4: 147,
+                                width: isTablet ? screenSize.width * 0.4: 136,
                                 height: screenSize.height * 0.06,
                                 child: ElevatedButton(
                                   onPressed: _toggleReport,
@@ -515,7 +515,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
             width: iconSize,
             height: iconSize,
           ),
-          SizedBox(height: screenSize.height * 0.004),
+          SizedBox(height: screenSize.height * 0.002),
           Text(
             label,
             style: TextStyle(
