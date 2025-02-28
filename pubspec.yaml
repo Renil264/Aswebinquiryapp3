@@ -20,6 +20,7 @@ dependencies:
   awesome_card: ^1.1.7
   shared_preferences: ^2.2.3
   flutter_svg: ^2.0.10+1
+  flutter_native_splash: ^2.4.0
 
 dev_dependencies:
   flutter_test:
@@ -31,6 +32,7 @@ flutter:
 
   assets:
     - assets/
+
   fonts:
     - family: DM Sans
       fonts:
@@ -39,3 +41,10 @@ flutter:
           weight: 700
         - asset: fonts/DMSans-Italic.ttf
           style: italic
+
+flutter_native_splash:
+  android: true
+  ios: true
+  image_path: "assets/logo.png"
+  adaptive_icon_background: "#ffffff"
+  adaptive_icon_foreground: "assets/logo.png"

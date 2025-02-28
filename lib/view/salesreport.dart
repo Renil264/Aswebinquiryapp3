@@ -110,7 +110,7 @@ class _SalesReportState extends State<SalesReport> {
 
   Widget _buildResponsiveLayout(double screenWidth, double screenHeight, bool isTablet, bool isLargeTablet) {
     // Use the full width of the screen
-    return Container(
+    return SizedBox(
       width: screenWidth,
       height: screenHeight - kToolbarHeight, // Account for AppBar height
       child: Column(
@@ -220,7 +220,7 @@ class _SalesReportState extends State<SalesReport> {
     final bool isTablet = screenWidth > 600;
     
     // Adjust date container width
-    final double dateWidth = isTablet ? 100 : 85;
+    final double dateWidth = isTablet ? 100 : 75;
     
     // Adjust item height based on screen size
     final double itemHeight = isTablet ? 70 : 60;
@@ -290,7 +290,7 @@ class _SalesReportState extends State<SalesReport> {
                             child: Text(
                               data['description']!,
                               style: TextStyle(
-                                fontSize: isTablet ? 17 : 15, // Larger font for tablet
+                                fontSize: isTablet ? 15: 13, // Larger font for tablet
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
@@ -318,7 +318,7 @@ class _SalesReportState extends State<SalesReport> {
                             child: Text(
                               data['quantity']!,
                               style: TextStyle(
-                                fontSize: isTablet ? 17 : 15, // Larger font for tablet
+                                fontSize: isTablet ? 15 : 13, // Larger font for tablet
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
@@ -346,9 +346,9 @@ class _SalesReportState extends State<SalesReport> {
                             child: Text(
                               data['price']!,
                               style: TextStyle(
-                                fontSize: isTablet ? 16 : 14, // Larger font for tablet
+                                fontSize: isTablet ? 15 : 13, // Larger font for tablet
                                 fontWeight: FontWeight.bold,
-                                color: Color(0xFF00A81C),
+                                color: const Color(0xFF00A81C),
                               ),
                             ),
                           ),
@@ -375,9 +375,9 @@ class _SalesReportState extends State<SalesReport> {
                             child: Text(
                               data['netPrice']!,
                               style: TextStyle(
-                                fontSize: isTablet ? 16 : 14, // Larger font for tablet
+                                fontSize: isTablet ? 15 : 13, // Larger font for tablet
                                 fontWeight: FontWeight.bold,
-                                color: Color(0xFF00A81C),
+                                color: const Color(0xFF00A81C),
                               ),
                             ),
                           ),
@@ -423,210 +423,210 @@ class _SalesReportState extends State<SalesReport> {
 
   final List<Map<String, String>> _salesData = [
     {
-      'date': 'Feb 21, 2025',
+      'date': '12/07/2024',
       'description': 'Glass',
       'quantity': '12',
       'price': '\$6.00',
       'netPrice': '\$72.00',
     },
     {
-      'date': 'Feb 20, 2025',
+      'date': '12/07/2024',
       'description': 'Mug',
       'quantity': '08',
       'price': '\$12.50',
       'netPrice': '\$100.00',
     },
     {
-      'date': 'Feb 18, 2025',
+      'date': '12/07/2024',
       'description': 'Plate',
       'quantity': '24',
       'price': '\$8.75',
       'netPrice': '\$210.00',
     },
     {
-      'date': 'Feb 15, 2025',
+      'date': '12/07/2024',
       'description': 'Bowl',
       'quantity': '16',
       'price': '\$9.25',
       'netPrice': '\$148.00',
     },
     {
-      'date': 'Feb 12, 2025',
+      'date': '12/07/2024',
       'description': 'Cutlery',
       'quantity': '32',
       'price': '\$4.50',
       'netPrice': '\$144.00',
     },
     {
-      'date': 'Feb 10, 2025',
+      'date': '12/07/2024',
       'description': 'Vase',
       'quantity': '04',
       'price': '\$42.00',
       'netPrice': '\$168.00',
     },
     {
-      'date': 'Feb 08, 2025',
+      'date': '12/07/2024',
       'description': 'Teapot',
       'quantity': '06',
       'price': '\$35.00',
       'netPrice': '\$210.00',
     },
     {
-      'date': 'Feb 05, 2025',
+      'date': '12/07/2024',
       'description': 'Chair',
       'quantity': '10',
       'price': '\$125.00',
       'netPrice': '\$250.00',
     },
     {
-      'date': 'Feb 03, 2025',
+      'date': '12/07/2024',
       'description': 'Table',
       'quantity': '05',
       'price': '\$349.00',
       'netPrice': '\$745.00',
     },
     {
-      'date': 'Feb 01, 2025',
+      'date': '12/07/2024',
       'description': 'Lamp',
       'quantity': '08',
       'price': '\$89.00',
       'netPrice': '\$712.00',
     },
     {
-      'date': 'Jan 29, 2025',
+      'date': '12/07/2024',
       'description': 'Sofa',
       'quantity': '02',
       'price': '\$99.00',
       'netPrice': '\$798.00',
     },
     {
-      'date': 'Jan 25, 2025',
+      'date': '12/07/2024',
       'description': 'Cabinet',
       'quantity': '03',
       'price': '\$50.00',
       'netPrice': '\$250.00',
     },
     {
-      'date': 'Jan 22, 2025',
+      'date': '12/07/2024',
       'description': 'Rug',
       'quantity': '05',
       'price': '\$99.00',
       'netPrice': '\$495.00',
     },
     {
-      'date': 'Jan 18, 2025',
+      'date': '12/07/2024',
       'description': 'Mirror',
       'quantity': '06',
       'price': '\$75.00',
       'netPrice': '\$150.00',
     },
     {
-      'date': 'Jan 15, 2025',
+      'date': '12/07/2024',
       'description': 'Bookcase',
       'quantity': '04',
       'price': '\$45.00',
       'netPrice': '\$700.00',
     },
     {
-      'date': 'Jan 12, 2025',
+      'date': '12/07/2024',
       'description': 'Clock',
       'quantity': '12',
       'price': '\$45.00',
       'netPrice': '\$540.00',
     },
     {
-      'date': 'Jan 08, 2025',
+      'date': '12/07/2024',
       'description': 'Planter',
       'quantity': '15',
       'price': '\$22.00',
       'netPrice': '\$330.00',
     },
     {
-      'date': 'Jan 05, 2025',
+      'date': '12/07/2024',
       'description': 'Canvas',
       'quantity': '08',
       'price': '\$65.00',
       'netPrice': '\$520.00',
     },
     {
-      'date': 'Jan 02, 2025',
+      'date': '12/07/2024',
       'description': 'Pillow',
       'quantity': '20',
       'price': '\$28.00',
       'netPrice': '\$560.00',
     },
     {
-      'date': 'Dec 29, 2024',
+      'date': '12/07/2024',
       'description': 'Blanket',
       'quantity': '12',
       'price': '\$85.00',
       'netPrice': '\$120.00',
     },
     {
-      'date': 'Dec 25, 2024',
-      'description': 'Curtain',
+      'date': '12/07/2024',
+      'description': 'Curtain Hall',
       'quantity': '08',
       'price': '\$95.00',
       'netPrice': '\$760.00',
     },
     {
-      'date': 'Dec 20, 2024',
+      'date': '12/07/2024',
       'description': 'Candle',
       'quantity': '35',
       'price': '\$12.50',
       'netPrice': '\$437.50',
     },
     {
-      'date': 'Dec 15, 2024',
+      'date': '12/07/2024',
       'description': 'Basket',
       'quantity': '14',
       'price': '\$29.00',
       'netPrice': '\$406.00',
     },
     {
-      'date': 'Dec 12, 2024',
+      'date': '12/07/2024',
       'description': 'Tray',
       'quantity': '10',
       'price': '\$45.00',
       'netPrice': '\$450.00',
     },
     {
-      'date': 'Dec 10, 2024',
+      'date': '12/07/2024',
       'description': 'Pot',
       'quantity': '18',
       'price': '\$38.00',
       'netPrice': '\$684.00',
     },
     {
-      'date': 'Dec 07, 2024',
+      'date': '12/07/2024',
       'description': 'Towel',
       'quantity': '24',
       'price': '\$18.50',
       'netPrice': '\$444.00',
     },
     {
-      'date': 'Dec 04, 2024',
+      'date': '04/27/2025',
       'description': 'Bedding',
       'quantity': '06',
       'price': '\$15.00',
       'netPrice': '\$750.00',
     },
     {
-      'date': 'Dec 01, 2024',
-      'description': 'Oven',
+      'date': '08/21/2025',
+      'description': 'Diwan Bed',
       'quantity': '01',
       'price': '\$65.00',
       'netPrice': '\$625.00',
     },
     {
-      'date': 'Nov 28, 2024',
+      'date': '09/28/2025',
       'description': 'Blender',
       'quantity': '03',
       'price': '\$95.00',
       'netPrice': '\$285.00',
     },
     {
-      'date': 'Nov 25, 2024',
+      'date': '01/23/2025',
       'description': 'Toaster',
       'quantity': '05',
       'price': '\$65.00',

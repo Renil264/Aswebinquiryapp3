@@ -104,10 +104,10 @@ class ReportsView extends StatelessWidget {
                     onTap: () => viewModel.navigateToReport(context, '/payout-report'),
                   ),
                   const SizedBox(height: 20),
-                  _buildReportButton(
-                    title: 'Sales Report',
-                    onTap: () => viewModel.navigateToReport(context, '/sales-report'),
-                  ),
+                  // _buildReportButton(
+                  //   title: 'Sales Report',
+                  //   onTap: () => viewModel.navigateToReport(context, '/sales-report'),
+                  // ),
                 ],
               ),
             ),

@@ -1,6 +1,6 @@
+import 'package:antiquewebemquiry/view/splash_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'view/login_screen.dart';
 import 'viewmodel/login_viewmodel.dart';
 
 void main() {
@@ -30,7 +30,7 @@ class AntiqueSoftApp extends StatelessWidget {
             displaySmall: TextStyle(fontFamily: 'DM Sans', fontWeight: FontWeight.bold, fontStyle: FontStyle.italic),
           ),
         ),
-        home: const LoginScreen(),
+        home: const SplashScreen(),
       ),
     );
   }
