@@ -248,7 +248,7 @@ class _SalesReportState extends State<SalesReport> {
                 Text(
                   data['date']!,
                   style: TextStyle(
-                    fontSize: isTablet ? 12 : 10, // Larger font for tablet
+                    fontSize: isTablet ? 11 : 9, // Larger font for tablet
                     color: Colors.grey[800],
                     fontWeight: FontWeight.w500,
                   ),

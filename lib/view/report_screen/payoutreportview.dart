@@ -185,7 +185,7 @@ class _PayoutReportViewState extends State<PayoutReportView> {
             _buildPayableRow('Layaway Sales', '\$0.00'),
             _buildPayableRow('Sales Tax', '\$0.00'),
             const Divider(height: 24),
-            _buildPayableRow('Total', '\$274.50', isBold: true),
+            _buildPayable('Total Sales', '\$274.50', isBold: true),
             const Divider(height: 24),
             const Text(
               'Less',
@@ -199,7 +199,7 @@ class _PayoutReportViewState extends State<PayoutReportView> {
             _buildPayableRow('Sales Returns', '\$0.00'),
             _buildPayableRow('Voids', '\$0.00'),
             const Divider(height: 24),
-            _buildPayableRow('Total', '\$274.50', isBold: true),
+            _buildPayable('Total Sales', '\$274.50', isBold: true),
           ],
         ),
       ),
@@ -238,9 +238,9 @@ class _PayoutReportViewState extends State<PayoutReportView> {
             const Divider(height: 24),
             _buildPayableRow('Rental Dues', '\$105.60'),
             const Divider(height: 24),
-            _buildPayableRow('Total Due', '\$124.82', isBold: true),
+            _buildPayable('Total Due', '\$124.82', isBold: true),
             const Divider(height: 24),
-            _buildAutoDetect('Total Sales - Total Dues', '\$149.68', isBold: true),
+            _buildAutoDetect('Total Sales - Total Due', '\$149.68', isBold: true),
             const Divider(height: 24),
             
           ],
@@ -270,6 +270,35 @@ class _PayoutReportViewState extends State<PayoutReportView> {
               fontFamily: 'DM Sans',
               fontSize: 14,
               color: const Color(0xFF172B4D),
+              fontWeight: isBold ? FontWeight.bold : FontWeight.normal,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPayable(String label, String value, {bool isBold = false}) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            label,
+            style: TextStyle(
+              fontFamily: 'DM Sans',
+              fontSize: 14,
+              color: const Color(0xFF00CF9D),
+              fontWeight: isBold ? FontWeight.bold : FontWeight.normal,
+            ),
+          ),
+          Text(
+            value,
+            style: TextStyle(
+              fontFamily: 'DM Sans',
+              fontSize: 14,
+              color: const Color(0xFF00CF9D),
               fontWeight: isBold ? FontWeight.bold : FontWeight.normal,
             ),
           ),

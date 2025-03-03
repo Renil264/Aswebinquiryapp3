@@ -24,7 +24,7 @@ class DateRangePickerWidget extends StatefulWidget {
 
 class _DateRangePickerWidgetState extends State<DateRangePickerWidget> {
   // Date formatter for displaying dates in MM/dd/yyyy format
-  final DateFormat displayFormat = DateFormat('dd/MM/yyyy');
+  final DateFormat displayFormat = DateFormat('MM/dd/yyyy');
   
   // Controls the visibility of the date range dropdown
   bool isExpanded = false;
@@ -77,74 +77,78 @@ class _DateRangePickerWidgetState extends State<DateRangePickerWidget> {
         return Column(
           children: [
             // Main date picker button container
-            Container(
-              width: double.infinity,
-              // Limit maximum width on larger screens
-              constraints: BoxConstraints(
-                maxWidth: isSmallScreen ? double.infinity : 600,
-              ),
-              // Responsive margins
-              margin: EdgeInsets.symmetric(
-                horizontal: isSmallScreen ? 16 : 0,
-                vertical: 8,
-              ),
-              // Responsive padding
-              padding: EdgeInsets.symmetric(
-                horizontal: isSmallScreen ? 12 : 16,
-                vertical: 12,
-              ),
-              // Container styling
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(isSmallScreen ? 20 : 30),
-                border: Border.all(color: Colors.grey.shade300),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.05),
-                    blurRadius: 2,
-                    offset: const Offset(0, 1),
-                  ),
-                ],
-              ),
-              child: Row(
-                children: [
-                  // Calendar icon
-                  Icon(
-                    Icons.calendar_today,
-                    size: isSmallScreen ? 18 : 20,
-                    color: Colors.grey.shade600,
-                  ),
-                  // Responsive spacing
-                  SizedBox(width: isSmallScreen ? 12 : 25),
-                  // Selected date range display
-                  Expanded(
-                    child: Text(
-                      selectedRange != null
-                          ? '${displayFormat.format(selectedRange!.start)} - ${displayFormat.format(selectedRange!.end)}'
-                          : 'Select Date Range',
-                      style: TextStyle(
-                        color: Colors.grey.shade700,
-                        fontSize: isSmallScreen ? 13 : 14,
+            GestureDetector(
+              // Make the entire container tappable to show the dropdown
+              onTap: () {
+                setState(() {
+                  isExpanded = !isExpanded;
+                });
+              },
+              child: Container(
+                width: double.infinity,
+                // Limit maximum width on larger screens
+                constraints: BoxConstraints(
+                  maxWidth: isSmallScreen ? double.infinity : 600,
+                ),
+                // Responsive margins
+                margin: EdgeInsets.symmetric(
+                  horizontal: isSmallScreen ? 16 : 0,
+                  vertical: 8,
+                ),
+                // Responsive padding
+                padding: EdgeInsets.symmetric(
+                  horizontal: isSmallScreen ? 12 : 16,
+                  vertical: 12,
+                ),
+                // Container styling
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(isSmallScreen ? 20 : 30),
+                  border: Border.all(color: Colors.grey.shade300),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.05),
+                      blurRadius: 2,
+                      offset: const Offset(0, 1),
+                    ),
+                  ],
+                ),
+                child: Row(
+                  children: [
+                    // Calendar icon
+                    Icon(
+                      Icons.calendar_today,
+                      size: isSmallScreen ? 18 : 20,
+                      color: Colors.grey.shade600,
+                    ),
+                    // Responsive spacing
+                    SizedBox(width: isSmallScreen ? 12 : 25),
+                    // Selected date range display
+                    Expanded(
+                      child: Text(
+                        selectedRange != null
+                            ? '${displayFormat.format(selectedRange!.start)} - ${displayFormat.format(selectedRange!.end)}'
+                            : 'Select Date Range',
+                        style: TextStyle(
+                          color: Colors.grey.shade700,
+                          fontSize: isSmallScreen ? 13 : 14,
+                        ),
                       ),
                     ),
-                  ),
-                  // Search/expand button
-                  GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        isExpanded = !isExpanded;
-                      });
-                      if (!isExpanded) {
+                    // Search button (now only performs search action)
+                    GestureDetector(
+                      onTap: () {
+                        // Only perform search, don't toggle dropdown
                         widget.onSearch();
-                      }
-                    },
-                    child: const Icon(
-                      Icons.search,
-                      size: 24,
-                      color: Color(0xFF00CF9D),
+                      },
+                      child: const Icon(
+                        Icons.search,
+                        size: 24,
+                        color: Color(0xFF00CF9D),
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
             // Expandable date range list
@@ -187,6 +191,8 @@ class _DateRangePickerWidgetState extends State<DateRangePickerWidget> {
                             onTap: () {
                               setState(() {
                                 selectedRange = range;
+                                // Automatically close dropdown after selection
+                                isExpanded = false;
                               });
                               widget.onDateRangeSelected(range);
                             },
