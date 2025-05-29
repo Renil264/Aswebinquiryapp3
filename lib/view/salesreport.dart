@@ -23,45 +23,162 @@ class _SalesReportState extends State<SalesReport> {
   @override
   void initState() {
     super.initState();
-    startDate = DateTime(2020, 1, 1);
-    endDate = DateTime(2026, 12, 31);
-  }
+    DateTime now = DateTime.now();
 
-  Future<void> _selectDate(BuildContext context, bool isStartDate) async {
-    final DateTime? picked = await showDatePicker(
-      context: context,
-      initialDate: isStartDate ? startDate ?? DateTime.now() : endDate ?? DateTime.now(),
-      firstDate: DateTime(2020),
-      lastDate: DateTime(2026),
-      builder: (context, child) {
-        return Theme(
-          data: Theme.of(context).copyWith(
-            colorScheme: const ColorScheme.light(
-              primary: Colors.orange, // header background color
-              onPrimary: Colors.white, // header text color
-              onSurface: Colors.black, // body text color
-            ),
-            textButtonTheme: TextButtonThemeData(
-              style: TextButton.styleFrom(
-                foregroundColor: Colors.orange, // button text color
-              ),
-            ),
-          ),
-          child: child!,
-        );
-      },
-    );
-
-    if (picked != null) {
-      setState(() {
-        if (isStartDate) {
-          startDate = picked;
-        } else {
-          endDate = picked;
-        }
-      });
+     switch (widget.filterType) {
+      case 'Daily':
+        // Set both start and end date to today's date
+        // But allow flexibility to change later
+        startDate = now;
+        endDate = now;
+        break;
+      
+      case 'Monthly':
+        // Set both start and end date to the current month
+        startDate = DateTime(now.year, now.month, 1);
+        endDate = DateTime(now.year, now.month, now.day);
+        break;
+      
+      default:
+        // Default behavior: set wide date range
+        startDate = DateTime(2020, 1, 1);
+        endDate = DateTime(2026, 12, 31);
     }
   }
+  
+ 
+
+  
+   Future<void> _selectDate(BuildContext context, bool isStartDate) async {
+    switch (widget.filterType) {
+      case 'Daily':
+        // More flexible Daily picker
+        final DateTime? picked = await showDatePicker(
+          context: context,
+          initialDate: isStartDate ? startDate ?? DateTime.now() : endDate ?? DateTime.now(),
+          firstDate: DateTime(2020),
+          lastDate: DateTime.now(),
+          builder: (context, child) {
+            return Theme(
+              data: Theme.of(context).copyWith(
+                colorScheme: const ColorScheme.light(
+                  primary: Colors.orange,
+                  onPrimary: Colors.white,
+                  onSurface: Colors.black,
+                ),
+                textButtonTheme: TextButtonThemeData(
+                  style: TextButton.styleFrom(
+                    foregroundColor: Colors.orange,
+                  ),
+                ),
+              ),
+              child: child!,
+            );
+          },
+        );
+
+        if (picked != null) {
+          setState(() {
+            if (isStartDate) {
+              startDate = picked;
+              // Ensure end date is not before start date
+              if (endDate != null && picked.isAfter(endDate!)) {
+                endDate = picked;
+              }
+            } else {
+              endDate = picked;
+              // Ensure start date is not after end date
+              if (startDate != null && picked.isBefore(startDate!)) {
+                startDate = picked;
+              }
+            }
+          });
+        }
+        break;
+      
+      case 'Monthly':
+        // Monthly picker remains the same
+        final DateTime? picked = await showDatePicker(
+          context: context,
+          initialDate: isStartDate ? startDate ?? DateTime.now() : endDate ?? DateTime.now(),
+          firstDate: DateTime(2020, 1),
+          lastDate: DateTime.now(),
+          builder: (context, child) {
+            return Theme(
+              data: Theme.of(context).copyWith(
+                colorScheme: const ColorScheme.light(
+                  primary: Colors.orange,
+                  onPrimary: Colors.white,
+                  onSurface: Colors.black,
+                ),
+                textButtonTheme: TextButtonThemeData(
+                  style: TextButton.styleFrom(
+                    foregroundColor: Colors.orange,
+                  ),
+                ),
+              ),
+              child: child!,
+            );
+          },
+        );
+
+        if (picked != null) {
+          setState(() {
+            if (isStartDate) {
+              startDate = picked;
+              // Ensure end date is not before start date
+              if (endDate != null && picked.isAfter(endDate!)) {
+                endDate = picked;
+              }
+            } else {
+              endDate = picked;
+              // Ensure start date is not after end date
+              if (startDate != null && picked.isBefore(startDate!)) {
+                startDate = picked;
+              }
+            }
+          });
+        }
+        break;
+      
+      default:
+        // Default date picker for other filter types
+        final DateTime? picked = await showDatePicker(
+          context: context,
+          initialDate: isStartDate ? startDate ?? DateTime.now() : endDate ?? DateTime.now(),
+          firstDate: DateTime(2020),
+          lastDate: DateTime(2026),
+          builder: (context, child) {
+            return Theme(
+              data: Theme.of(context).copyWith(
+                colorScheme: const ColorScheme.light(
+                  primary: Colors.orange,
+                  onPrimary: Colors.white,
+                  onSurface: Colors.black,
+                ),
+                textButtonTheme: TextButtonThemeData(
+                  style: TextButton.styleFrom(
+                    foregroundColor: Colors.orange,
+                  ),
+                ),
+              ),
+              child: child!,
+            );
+          },
+        );
+
+        if (picked != null) {
+          setState(() {
+            if (isStartDate) {
+              startDate = picked;
+            } else {
+              endDate = picked;
+            }
+          });
+        }
+    }
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -139,7 +256,7 @@ class _SalesReportState extends State<SalesReport> {
           
           // Sales List - This will take the remaining screen space
           Expanded(
-            child: Container(
+            child: SizedBox(
               width: screenWidth,
               child: ListView.builder(
                 padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -200,7 +317,9 @@ class _SalesReportState extends State<SalesReport> {
                 const Icon(Icons.calendar_today, size: 16, color: Colors.black),
                 const SizedBox(width: 8),
                 Text(
-                  dateFormat.format(isStartDate ? startDate! : endDate!),
+                  widget.filterType == 'Monthly'
+                    ? DateFormat('MMMM yyyy').format(isStartDate ? startDate! : endDate!)
+                    : dateFormat.format(isStartDate ? startDate! : endDate!),
                   style: const TextStyle(
                     fontSize: 13,
                     fontWeight: FontWeight.w500,
@@ -382,7 +501,7 @@ class _SalesReportState extends State<SalesReport> {
                             ),
                           ),
                         ],
-                      ),
+                        ),
                     ),
                   ],
                 ),
@@ -568,69 +687,6 @@ class _SalesReportState extends State<SalesReport> {
       'quantity': '08',
       'price': '\$95.00',
       'netPrice': '\$760.00',
-    },
-    {
-      'date': '12/07/2024',
-      'description': 'Candle',
-      'quantity': '35',
-      'price': '\$12.50',
-      'netPrice': '\$437.50',
-    },
-    {
-      'date': '12/07/2024',
-      'description': 'Basket',
-      'quantity': '14',
-      'price': '\$29.00',
-      'netPrice': '\$406.00',
-    },
-    {
-      'date': '12/07/2024',
-      'description': 'Tray',
-      'quantity': '10',
-      'price': '\$45.00',
-      'netPrice': '\$450.00',
-    },
-    {
-      'date': '12/07/2024',
-      'description': 'Pot',
-      'quantity': '18',
-      'price': '\$38.00',
-      'netPrice': '\$684.00',
-    },
-    {
-      'date': '12/07/2024',
-      'description': 'Towel',
-      'quantity': '24',
-      'price': '\$18.50',
-      'netPrice': '\$444.00',
-    },
-    {
-      'date': '04/27/2025',
-      'description': 'Bedding',
-      'quantity': '06',
-      'price': '\$15.00',
-      'netPrice': '\$750.00',
-    },
-    {
-      'date': '08/21/2025',
-      'description': 'Diwan Bed',
-      'quantity': '01',
-      'price': '\$65.00',
-      'netPrice': '\$625.00',
-    },
-    {
-      'date': '09/28/2025',
-      'description': 'Blender',
-      'quantity': '03',
-      'price': '\$95.00',
-      'netPrice': '\$285.00',
-    },
-    {
-      'date': '01/23/2025',
-      'description': 'Toaster',
-      'quantity': '05',
-      'price': '\$65.00',
-      'netPrice': '\$325.00',
     },
   ];
 }

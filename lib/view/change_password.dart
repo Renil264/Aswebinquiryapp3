@@ -20,7 +20,7 @@ class ChangePasswordView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFEEF2F3),
+      backgroundColor: const Color(0xFFF1EDE8),
       appBar: AppBar(
         elevation: 0,
         backgroundColor: Colors.white,
@@ -72,14 +72,14 @@ class ChangePasswordView extends StatelessWidget {
                             Icon(
                               Icons.lock_outline,
                               size: 18,
-                              color: Color(0xFFEF6B31),
+                              color: const Color(0xFFFF8500),
                             ),
                             SizedBox(width: 8),
                             Text(
                               'Change Password',
                               style: TextStyle(
                                 fontSize: 14,
-                                color: Color(0xFFEF6B31),
+                                color: const Color(0xFFFF8500),
                                 fontWeight: FontWeight.w500,
                               ),
                             ),
@@ -137,7 +137,7 @@ class ChangePasswordView extends StatelessWidget {
                                         }
                                       },
                                 style: ElevatedButton.styleFrom(
-                                  backgroundColor: const Color(0xFFEF6B31),
+                                  backgroundColor: const Color(0xFFFF8500),
                                   padding: const EdgeInsets.symmetric(vertical: 8),
                                   elevation: 0,
                                   shape: RoundedRectangleBorder(

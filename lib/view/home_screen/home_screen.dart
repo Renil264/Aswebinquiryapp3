@@ -1,9 +1,12 @@
 import 'package:antiquewebemquiry/view/hamburger.dart';
+import 'package:antiquewebemquiry/view/message.dart';
+import 'package:antiquewebemquiry/view/notification.dart';
+import 'package:antiquewebemquiry/view/popupmessage.dart';
 import 'package:antiquewebemquiry/view/salesreport.dart';
 import 'package:antiquewebemquiry/viewmodel/home_viewmodel.dart';
+import 'package:antiquewebemquiry/yearlysales.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
 import 'package:fl_chart/fl_chart.dart';
 import '../report_screen/report_screen.dart';
@@ -19,6 +22,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   String selectedFilter = 'Daily';
   bool _showReport = false;
+  bool _showWelcomeNotification = true; // Control the visibility of the welcome notification
   late AnimationController _animationController;
   late Animation<double> _animation;
   
@@ -59,14 +63,58 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
   }
 
   void _toggleReport() {
+    if (selectedFilter == 'Yearly') {
+      // Navigate to YearlySalesReport for Yearly filter
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const YearlySalesReportPage(),
+        ),
+      );
+    } else {
+      // Existing toggle report logic for Daily and Monthly
+      setState(() {
+        _showReport = !_showReport;
+        if (_showReport) {
+          _animationController.forward();
+        } else {
+          _animationController.reverse();
+        }
+      });
+    }
+  }
+  
+  // Handle closing the welcome notification
+  void _closeWelcomeNotification() {
     setState(() {
-      _showReport = !_showReport;
-      if (_showReport) {
-        _animationController.forward();
-      } else {
-        _animationController.reverse();
-      }
+      _showWelcomeNotification = false;
     });
+  }
+  
+  // Handle opening action for the welcome notification
+  void _openWelcomeNotification() {
+    // Implement action for when "Open" is clicked
+    // For example, navigate to a specific page or show more details
+    _closeWelcomeNotification();
+  }
+  
+  // Navigate to MessagePage
+  void _navigateToMessagePage() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const MessagePage(initialTabIndex: 0,),
+      ),
+    );
+  }
+
+  void _navigateToNotificationPage() {
+    // Navigator.push(
+    //   context,
+    //   // MaterialPageRoute(
+    //   //   builder: (context) => const NotificationPopupScreen(),
+    //   // ),
+    // );
   }
 
   @override
@@ -109,9 +157,41 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                             Stack(
                               children: [
                                 IconButton(
+                                  icon: const Icon(Icons.email_outlined),
+                                  color: Colors.black,
+                                  onPressed: _navigateToMessagePage,
+                                ),
+                                Positioned(
+                                  right: 8,
+                                  top: 8,
+                                  child: Container(
+                                    padding: const EdgeInsets.all(2),
+                                    decoration: BoxDecoration(
+                                      color: Colors.red,
+                                      borderRadius: BorderRadius.circular(6),
+                                    ),
+                                    constraints: const BoxConstraints(
+                                      minWidth: 14,
+                                      minHeight: 14,
+                                    ),
+                                    child: const Text(
+                                      '1',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 8,
+                                      ),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            Stack(
+                              children: [
+                                IconButton(
                                   icon: const Icon(Icons.notifications_outlined),
                                   color: Colors.black,
-                                  onPressed: () {},
+                                  onPressed: _navigateToNotificationPage,
                                 ),
                                 Positioned(
                                   right: 8,
@@ -150,6 +230,14 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                       ],
                     ),
                   ),
+
+                  // Welcome Notification - displayed just below the AppBar
+                  if (_showWelcomeNotification)
+                    WelcomeNotification(
+                      message: 'Insert the message information. It would look better as two lines of text.',
+                      onClose: _closeWelcomeNotification,
+                      onOpen: _openWelcomeNotification,
+                    ),
 
                   Expanded(
                     child: SingleChildScrollView(
@@ -239,7 +327,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                                     ),
                                   ),
                                   child: const Text(
-                                    'View Report',
+                                    'View Sales',
                                     style: TextStyle(
                                       fontSize: 16,
                                       fontWeight: FontWeight.normal,
