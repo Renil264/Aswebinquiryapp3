@@ -1,0 +1,20 @@
+Step 1: Install Node: Check for the Node version: node -v.
+
+Step 2: Install the required firebase packages: npm install -g firebase-tools.
+
+Step 3: Login Into Firebase: firebase login.
+
+Step 4: Activate Flutterfire CLI: dart pub global activate flutterfire cli, but before that we need to install "git" as the  packages will be installed from git itself. So before Step 4 install git.
+
+Step 5: Once this is done, please type: flutterfire configure
+
+PS(If this doesnt work and provides you an error, then you need to do some set ups:
+dart pub global list
+dart pub global activate flutterfire_cli..after checking with these commands we need to check for the correct ones)
+
+"C:\Users\<YourUsername>\AppData\Local\Pub\Cache\bin" add this path into the environment variables.
+
+Step 6: Once Step 5 is done choose the necessary platforms such as IOS and Android and also choose the project from the console.
+
+Kindly add the Strings.xml in the res folder please.
+

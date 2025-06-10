@@ -12,6 +12,8 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+  bool isUsingStoreCode = true; // Toggle state for Store Code vs Vendor Name
+
   @override
   Widget build(BuildContext context) {
     final loginViewModel = context.watch<LoginViewModel>();
@@ -44,12 +46,64 @@ class _LoginScreenState extends State<LoginScreen> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     _buildTextFieldWithSvg(
-                      labelText: 'Store Code',
+                      labelText: isUsingStoreCode ? 'Store Code' : 'Vendor Name',
                       svgPath: 'assets/store.svg',
                       controller: loginViewModel.storeCodeController,
                       scaleFactor: scaleFactor,
                     ),
-                    SizedBox(height: 23* scaleFactor),
+                    SizedBox(height: 12 * scaleFactor),
+                    // Toggle option for Store Code vs Vendor Name
+                    SizedBox(
+                      width: 366 * scaleFactor,
+                      child: Row(
+                        children: [
+                          Transform.scale(
+                            scale: scaleFactor,
+                            child: Checkbox(
+                              value: isUsingStoreCode,
+                              onChanged: (value) {
+                                setState(() {
+                                  isUsingStoreCode = value ?? true;
+                                });
+                                // Clear the text field when switching
+                                loginViewModel.storeCodeController.clear();
+                              },
+                              activeColor: const Color(0xFF172B4D),
+                            ),
+                          ),
+                          Text(
+                            'Use Store Code',
+                            style: TextStyle(
+                              fontSize: 14 * scaleFactor,
+                              color: const Color(0xFF172B4D),
+                            ),
+                          ),
+                          SizedBox(width: 20 * scaleFactor),
+                          Transform.scale(
+                            scale: scaleFactor,
+                            child: Checkbox(
+                              value: !isUsingStoreCode,
+                              onChanged: (value) {
+                                setState(() {
+                                  isUsingStoreCode = !(value ?? false);
+                                });
+                                // Clear the text field when switching
+                                loginViewModel.storeCodeController.clear();
+                              },
+                              activeColor: const Color(0xFF172B4D),
+                            ),
+                          ),
+                          Text(
+                            'Use Vendor Name',
+                            style: TextStyle(
+                              fontSize: 14 * scaleFactor,
+                              color: const Color(0xFF172B4D),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(height: 11 * scaleFactor),
                     _buildTextFieldWithSvg(
                       labelText: 'User Id',
                       svgPath: 'assets/user.svg',
