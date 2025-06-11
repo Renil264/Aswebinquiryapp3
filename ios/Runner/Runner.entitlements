@@ -7,10 +7,10 @@
   <key>aps-environment</key>
   <string>production</string> <!-- use "production" for App Store -->
 
-  <!-- Enable background mode -->
+  <!-- Enable background mode
   <key>UIBackgroundModes</key>
   <array>
     <string>remote-notification</string>
-  </array>
+  </array> -->
 </dict>
 </plist>
