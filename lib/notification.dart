@@ -37,21 +37,21 @@ class NotificationService {
       },
     );
 
-    
-    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      print('Got a message whilst in the foreground!');
-      print('Message data: ${message.data}');
-    
-      if (message.notification != null) {
-        print('Message also contained a notification: ${message.notification}');
-        _showNotification(message);
-      }
-    });
-    
-    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-      print('A new onMessageOpenedApp event was published!');
-      _handleNotificationTap(message);
-    });
+    // Remove these listeners from here - they should be in main.dart
+    // FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+    //   print('Got a message whilst in the foreground!');
+    //   print('Message data: ${message.data}');
+    //
+    //   if (message.notification != null) {
+    //     print('Message also contained a notification: ${message.notification}');
+    //     _showNotification(message);
+    //   }
+    // });
+    //
+    // FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+    //   print('A new onMessageOpenedApp event was published!');
+    //   _handleNotificationTap(message);
+    // });
   }
 
   Future<void> _showNotification(RemoteMessage message) async {
