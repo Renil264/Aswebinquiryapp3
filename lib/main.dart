@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:provider/provider.dart';
+import 'dart:io' show Platform;
 
 import 'notification.dart';
 import 'view/login_screen.dart';
@@ -98,6 +99,11 @@ class _AntiqueSoftAppState extends State<AntiqueSoftApp> {
         alert: true,
         badge: true,
         sound: true,
+        // IMPORTANT: These are crucial for iOS foreground notifications
+        announcement: false,
+        carPlay: false,
+        criticalAlert: false,
+        provisional: false,
       );
 
       print('🔐 iOS permission status: ${settings.authorizationStatus}');
@@ -108,6 +114,16 @@ class _AntiqueSoftAppState extends State<AntiqueSoftApp> {
         print('⚠️ Provisional notification permissions granted');
       } else {
         print('❌ Notification permissions denied');
+      }
+
+      // CRITICAL FOR iOS: Configure foreground notification presentation options
+      if (Platform.isIOS) {
+        await messaging.setForegroundNotificationPresentationOptions(
+          alert: true,  // Show alert/banner
+          badge: true,  // Update app badge
+          sound: true,  // Play notification sound
+        );
+        print('🍎 iOS foreground notification options configured');
       }
 
       // Initialize local notification service
@@ -126,7 +142,12 @@ class _AntiqueSoftAppState extends State<AntiqueSoftApp> {
       // Listen for foreground messages
       FirebaseMessaging.onMessage.listen((RemoteMessage message) {
         print('📲 Foreground message received: ${message.notification?.title}');
+        print('📱 Platform: ${Platform.isIOS ? 'iOS' : 'Android'}');
+        
         try {
+          // For iOS, the system notification should now appear due to 
+          // setForegroundNotificationPresentationOptions above
+          // But we can also show local notification as backup
           notificationService.showNotification(message);
         } catch (e) {
           print('❌ Failed to show notification: $e');
@@ -138,6 +159,13 @@ class _AntiqueSoftAppState extends State<AntiqueSoftApp> {
         print('📲 App opened from notification: ${message.notification?.title}');
         // Handle navigation here if needed
       });
+
+      // Handle initial message when app is launched from terminated state
+      RemoteMessage? initialMessage = await messaging.getInitialMessage();
+      if (initialMessage != null) {
+        print('📲 App launched from notification: ${initialMessage.notification?.title}');
+        // Handle navigation here if needed
+      }
 
     } catch (e) {
       print('❌ Push notification setup failed: $e');
