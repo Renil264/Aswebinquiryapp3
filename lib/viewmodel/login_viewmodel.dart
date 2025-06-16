@@ -50,6 +50,19 @@ class LoginViewModel extends ChangeNotifier {
     }
   }
 
+  String encryptString(String input) {
+  int xorKey = 30;
+  String result = '';
+
+  for (int i = 0; i < input.length; i++) {
+    int charCode = input.codeUnitAt(i);
+    int encryptedCharCode = charCode ^ xorKey;
+    result += String.fromCharCode(encryptedCharCode);
+  }
+
+  return result;
+}
+
   /// 👇 MAIN LOGIN METHOD WITH API INTEGRATION
   Future<bool> login(BuildContext context) async {
     String storeCode = storeCodeController.text.trim();
@@ -71,7 +84,7 @@ class LoginViewModel extends ChangeNotifier {
     final body = jsonEncode({
       "location": storeCode,
       "username": username,
-      "password": password,
+      "password": encryptString(password),
       "fcmToken": fcmToken,
     });
 
