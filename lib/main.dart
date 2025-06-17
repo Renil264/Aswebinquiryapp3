@@ -1,11 +1,14 @@
-import 'package:antiquewebemquiry/firebase_options.dart';
+import 'package:antiquewebemquiry/Services/firebase_options.dart';
+import 'package:antiquewebemquiry/Global/location.dart';
+import 'package:antiquewebemquiry/Global/username.dart';
+import 'package:antiquewebemquiry/Global/vendorid.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:provider/provider.dart';
 import 'dart:io' show Platform;
 
-import 'notification.dart';
+import 'Services/notification.dart';
 import 'view/login_screen.dart';
 import 'viewmodel/login_viewmodel.dart';
 
@@ -14,17 +17,21 @@ import 'viewmodel/login_viewmodel.dart';
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   try {
     await Firebase.initializeApp();
-    print('📦 Background message received: ${message.messageId}');
+    // ignore: avoid_print
+    print(' Background message received: ${message.messageId}');
     NotificationService().showNotification(message);
   } catch (e) {
-    print('❌ Background message handler error: $e');
+    // ignore: avoid_print
+    print(' Background message handler error: $e');
   }
 }
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  
-  print('🚀 Starting app initialization...');
+
+  await Location.loadlocation();
+  await Username.loadusername();
+  await Vendor.loadvendorid();
   
   runApp(const AntiqueSoftApp());
 }
@@ -49,7 +56,8 @@ class _AntiqueSoftAppState extends State<AntiqueSoftApp> {
 
   Future<void> _initializeApp() async {
     try {
-      print('🔥 Initializing Firebase...');
+      // ignore: avoid_print
+      print('Initializing Firebase...');
       
       // Initialize Firebase with timeout
       await Firebase.initializeApp(
@@ -61,15 +69,18 @@ class _AntiqueSoftAppState extends State<AntiqueSoftApp> {
         },
       );
       
-      print('✅ Firebase initialized successfully');
+      // ignore: avoid_print
+      print('Firebase initialized successfully');
 
       // Setup FCM background message handler
       FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
-      print('📱 Background message handler set');
+      // ignore: avoid_print
+      print('Background message handler set');
 
       // Setup push notifications
       await _setupPushNotifications();
-      print('🔔 Push notifications setup complete');
+      // ignore: avoid_print
+      print('Push notifications setup complete');
 
       if (mounted) {
         setState(() {
@@ -78,7 +89,9 @@ class _AntiqueSoftAppState extends State<AntiqueSoftApp> {
       }
       
     } catch (e, stackTrace) {
-      print('❌ App initialization failed: $e');
+      // ignore: avoid_print
+      print('App initialization failed: $e');
+      // ignore: avoid_print
       print('Stack trace: $stackTrace');
       
       if (mounted) {
@@ -106,14 +119,18 @@ class _AntiqueSoftAppState extends State<AntiqueSoftApp> {
         provisional: false,
       );
 
-      print('🔐 iOS permission status: ${settings.authorizationStatus}');
+      // ignore: avoid_print
+      print('iOS permission status: ${settings.authorizationStatus}');
 
       if (settings.authorizationStatus == AuthorizationStatus.authorized) {
-        print('✅ Notification permissions granted');
+        // ignore: avoid_print
+        print('Notification permissions granted');
       } else if (settings.authorizationStatus == AuthorizationStatus.provisional) {
-        print('⚠️ Provisional notification permissions granted');
+        // ignore: avoid_print
+        print('Provisional notification permissions granted');
       } else {
-        print('❌ Notification permissions denied');
+        // ignore: avoid_print
+        print(' Notification permissions denied');
       }
 
       // CRITICAL FOR iOS: Configure foreground notification presentation options
@@ -123,26 +140,32 @@ class _AntiqueSoftAppState extends State<AntiqueSoftApp> {
           badge: true,  // Update app badge
           sound: true,  // Play notification sound
         );
-        print('🍎 iOS foreground notification options configured');
+        // ignore: avoid_print
+        print(' iOS foreground notification options configured');
       }
 
       // Initialize local notification service
       NotificationService notificationService = NotificationService();
       await notificationService.init();
-      print('📲 Local notification service initialized');
+      // ignore: avoid_print
+      print('Local notification service initialized');
 
       // Get FCM token
       try {
         String? token = await messaging.getToken();
-        print('📱 FCM Token: ${token ?? 'No token received'}');
+        // ignore: avoid_print
+        print('FCM Token: ${token ?? 'No token received'}');
       } catch (e) {
-        print('⚠️ Failed to get FCM token: $e');
+        // ignore: avoid_print
+        print('Failed to get FCM token: $e');
       }
 
       // Listen for foreground messages
       FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-        print('📲 Foreground message received: ${message.notification?.title}');
-        print('📱 Platform: ${Platform.isIOS ? 'iOS' : 'Android'}');
+        // ignore: avoid_print
+        print('Foreground message received: ${message.notification?.title}');
+        // ignore: avoid_print
+        print('Platform: ${Platform.isIOS ? 'iOS' : 'Android'}');
         
         try {
           // For iOS, the system notification should now appear due to 
@@ -150,25 +173,29 @@ class _AntiqueSoftAppState extends State<AntiqueSoftApp> {
           // But we can also show local notification as backup
           notificationService.showNotification(message);
         } catch (e) {
-          print('❌ Failed to show notification: $e');
+          // ignore: avoid_print
+          print('Failed to show notification: $e');
         }
       });
 
       // Listen for when user taps notification while app is in background
       FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-        print('📲 App opened from notification: ${message.notification?.title}');
+        // ignore: avoid_print
+        print('App opened from notification: ${message.notification?.title}');
         // Handle navigation here if needed
       });
 
       // Handle initial message when app is launched from terminated state
       RemoteMessage? initialMessage = await messaging.getInitialMessage();
       if (initialMessage != null) {
-        print('📲 App launched from notification: ${initialMessage.notification?.title}');
+        // ignore: avoid_print
+        print('App launched from notification: ${initialMessage.notification?.title}');
         // Handle navigation here if needed
       }
 
     } catch (e) {
-      print('❌ Push notification setup failed: $e');
+      // ignore: avoid_print
+      print('Push notification setup failed: $e');
       // Don't throw here, just log the error
     }
   }
@@ -233,7 +260,7 @@ class _AntiqueSoftAppState extends State<AntiqueSoftApp> {
 
     // Loading state
     if (!_initialized) {
-      return MaterialApp(
+      return const MaterialApp(
         title: 'AntiqueSoft',
         debugShowCheckedModeBanner: false,
         home: Scaffold(
@@ -244,11 +271,11 @@ class _AntiqueSoftAppState extends State<AntiqueSoftApp> {
               children: [
                 CircularProgressIndicator(
                   valueColor: AlwaysStoppedAnimation<Color>(
-                    const Color(0xFF172B4D),
+                    Color(0xFF172B4D),
                   ),
                 ),
-                const SizedBox(height: 24),
-                const Text(
+                SizedBox(height: 24),
+                Text(
                   'Initializing AntiqueSoft...',
                   style: TextStyle(
                     fontSize: 16,
@@ -256,8 +283,8 @@ class _AntiqueSoftAppState extends State<AntiqueSoftApp> {
                     color: Color(0xFF172B4D),
                   ),
                 ),
-                const SizedBox(height: 8),
-                const Text(
+                SizedBox(height: 8),
+                Text(
                   'Please wait while we set up the app',
                   style: TextStyle(
                     fontSize: 14,

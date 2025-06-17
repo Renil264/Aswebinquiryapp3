@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class NotificationPopupScreen extends StatefulWidget {
-  const NotificationPopupScreen({Key? key}) : super(key: key);
+  const NotificationPopupScreen({super.key});
 
   @override
   State<NotificationPopupScreen> createState() => _NotificationPopupScreenState();
@@ -71,12 +71,12 @@ class NotificationPopup extends StatelessWidget {
   final String buttonText;
 
   const NotificationPopup({
-    Key? key,
+    super.key,
     required this.title,
     required this.content,
     required this.onDismiss,
     this.buttonText = 'Open',
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -161,7 +161,7 @@ class NotificationPopup extends StatelessWidget {
                       child: Text(
                         buttonText,
                         style: const TextStyle(
-                          color: const Color(0xFFFF8500),
+                          color: Color(0xFFFF8500),
                           fontWeight: FontWeight.bold,
                         ),
                       ),

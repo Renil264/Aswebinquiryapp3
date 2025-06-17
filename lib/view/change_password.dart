@@ -72,6 +72,7 @@ class ChangePasswordView extends StatelessWidget {
                             Icon(
                               Icons.lock_outline,
                               size: 18,
+                              // ignore: unnecessary_const
                               color: const Color(0xFFFF8500),
                             ),
                             SizedBox(width: 8),
@@ -79,6 +80,7 @@ class ChangePasswordView extends StatelessWidget {
                               'Change Password',
                               style: TextStyle(
                                 fontSize: 14,
+                                // ignore: unnecessary_const
                                 color: const Color(0xFFFF8500),
                                 fontWeight: FontWeight.w500,
                               ),

@@ -7,11 +7,11 @@ class WelcomeNotification extends StatelessWidget {
   final VoidCallback onOpen;
 
   const WelcomeNotification({
-    Key? key,
+    super.key,
     required this.message,
     required this.onClose,
     required this.onOpen,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

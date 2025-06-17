@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class MessagePage extends StatefulWidget {
-  const MessagePage({Key? key, required int initialTabIndex}) : super(key: key);
+  const MessagePage({super.key, required int initialTabIndex});
 
   @override
   State<MessagePage> createState() => _MessagePageState();
@@ -56,8 +56,8 @@ class _MessagePageState extends State<MessagePage> with SingleTickerProviderStat
               controller: _tabController,
               labelColor: Colors.white,
               unselectedLabelColor: const Color(0xFFFF8500),
-              indicator: BoxDecoration(
-                color: const Color(0xFFFF8500),
+              indicator: const BoxDecoration(
+                color: Color(0xFFFF8500),
               ),
               indicatorSize: TabBarIndicatorSize.tab,
               tabs: [
@@ -176,10 +176,10 @@ class _MessagePageState extends State<MessagePage> with SingleTickerProviderStat
                 children: [
                   Text(
                     title,
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w500,
-                      color: const Color(0xFF2D3142),
+                      color: Color(0xFF2D3142),
                     ),
                   ),
                   const Spacer(),

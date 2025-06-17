@@ -3,6 +3,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'dart:io' show Platform;
 
 class NotificationService {
+  // ignore: unused_field
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
   final FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
@@ -42,7 +43,6 @@ class NotificationService {
       await _flutterLocalNotificationsPlugin.initialize(
         initializationSettings,
         onDidReceiveNotificationResponse: (NotificationResponse response) async {
-          print('Notification tapped: ${response.payload}');
           await _handleNotificationTap(response);
         },
       );
@@ -52,8 +52,10 @@ class NotificationService {
         await _createNotificationChannel();
       }
 
+      // ignore: avoid_print
       print('NotificationService initialized successfully');
     } catch (e) {
+      // ignore: avoid_print
       print('NotificationService initialization failed: $e');
       rethrow;
     }
@@ -75,6 +77,7 @@ class NotificationService {
 
     if (androidPlugin != null) {
       await androidPlugin.createNotificationChannel(channel);
+      // ignore: avoid_print
       print('Android notification channel created');
     }
   }
@@ -132,34 +135,44 @@ class NotificationService {
         payload: payload,
       );
 
+      // ignore: avoid_print
       print('Local notification shown successfully');
+      // ignore: avoid_print
       print('Platform: ${Platform.isIOS ? 'iOS' : 'Android'}');
+      // ignore: avoid_print
       print('Title: $title');
+      // ignore: avoid_print
       print(' Body: $body');
       
     } catch (e) {
+      // ignore: avoid_print
       print('Failed to show local notification: $e');
     }
   }
 
   Future<void> _handleNotificationTap(NotificationResponse response) async {
     try {
+      // ignore: avoid_print
       print('Notification tapped with payload: ${response.payload}');
       
       // Parse payload and handle navigation
       if (response.payload != null) {
         // Add your navigation logic here
         // Example: Navigate to specific screen based on payload
+        // ignore: avoid_print
         print('📱 Handling notification tap with payload: ${response.payload}');
       }
     } catch (e) {
+      // ignore: avoid_print
       print(' Error handling notification tap: $e');
     }
   }
 
   // Public method to show notification (called from main.dart)
   Future<void> showNotification(RemoteMessage message) async {
+    // ignore: avoid_print
     print('showNotification called for: ${message.notification?.title}');
+    // ignore: avoid_print
     print('Message data: ${message.data}');
     
     // Always show local notification for consistency across platforms
@@ -170,8 +183,10 @@ class NotificationService {
   Future<void> cancelAllNotifications() async {
     try {
       await _flutterLocalNotificationsPlugin.cancelAll();
+      // ignore: avoid_print
       print('All notifications cancelled');
     } catch (e) {
+      // ignore: avoid_print
       print('Failed to cancel notifications: $e');
     }
   }
@@ -180,8 +195,10 @@ class NotificationService {
   Future<void> cancelNotification(int id) async {
     try {
       await _flutterLocalNotificationsPlugin.cancel(id);
+      // ignore: avoid_print
       print('Notification $id cancelled');
     } catch (e) {
+      // ignore: avoid_print
       print('Failed to cancel notification $id: $e');
     }
   }
@@ -191,6 +208,7 @@ class NotificationService {
     try {
       return await _flutterLocalNotificationsPlugin.pendingNotificationRequests();
     } catch (e) {
+      // ignore: avoid_print
       print(' Failed to get pending notifications: $e');
       return [];
     }
@@ -216,6 +234,7 @@ class NotificationService {
       }
       return false;
     } catch (e) {
+      // ignore: avoid_print
       print('Failed to check notification permissions: $e');
       return false;
     }
