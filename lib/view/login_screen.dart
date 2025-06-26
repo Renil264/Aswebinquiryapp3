@@ -34,7 +34,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 SvgPicture.asset(
                   'assets/logo.svg',
                   height: 120 * scaleFactor,
-                  fit: BoxFit.contain,
+                  fit: BoxFit.fitWidth,
                 ),
                 SizedBox(height: 38 * scaleFactor),
                 Column(
