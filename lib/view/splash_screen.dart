@@ -32,37 +32,44 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   Widget _buildLogoWithText() {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        FractionallySizedBox(
-          widthFactor: 0.3,
-          child: AspectRatio(
-            aspectRatio: 1,
-            child: SvgPicture.asset(
-              'assets/logo.svg',
-              fit: BoxFit.contain,
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        double screenWidth = constraints.maxWidth;
+        double scaleFactor = screenWidth / 422; // Base width scaling
+
+        return Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            FractionallySizedBox(
+              widthFactor: 0.20, // 30% of screen width
+              child: AspectRatio(
+                aspectRatio: 1, // Maintain square logo shape
+                child: SvgPicture.asset(
+                  'assets/logo.svg',
+                  fit: BoxFit.contain,
+                ),
+              ),
             ),
-          ),
-        ),
-        const SizedBox(height: 10),
-        const Text(
-          'AntiqueSoft',
-          style: TextStyle(
-            color: Color(0xFF0C2A5D),
-            fontWeight: FontWeight.bold,
-            fontSize: 18,
-          ),
-        ),
-        const Text(
-          'Web Inquiry',
-          style: TextStyle(
-            color: Color(0xFF0C2A5D),
-            fontWeight: FontWeight.bold,
-            fontSize: 18,
-          ),
-        ),
-      ],
+            SizedBox(height: 8 * scaleFactor),
+            Text(
+              'AntiqueSoft',
+              style: TextStyle(
+                color: const Color(0xFF0C2A5D),
+                fontWeight: FontWeight.bold,
+                fontSize: 16 * scaleFactor,
+              ),
+            ),
+            Text(
+              'Web Inquiry',
+              style: TextStyle(
+                color: const Color(0xFF0C2A5D),
+                fontWeight: FontWeight.bold,
+                fontSize: 16 * scaleFactor,
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 }
