@@ -7,7 +7,6 @@ class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
 
   @override
-  // ignore: library_private_types_in_public_api
   _SplashScreenState createState() => _SplashScreenState();
 }
 
@@ -15,7 +14,7 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    
+
     // Navigate to existing login page after a delay
     Timer(const Duration(seconds: 3), () {
       Navigator.of(context).pushReplacement(
@@ -26,14 +25,47 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
+    double scaleFactor = MediaQuery.of(context).size.width / 422;
+
     return Scaffold(
       backgroundColor: Colors.white,
       body: Center(
-        child: SvgPicture.asset(
-          'assets/logo.svg',
-          width: MediaQuery.of(context).size.width*0.6,
-          height: MediaQuery.of(context).size.height*0.15,
-          fit: BoxFit.contain,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            SvgPicture.asset(
+              'assets/logo.svg',
+              width: MediaQuery.of(context).size.width * 0.3,
+              height: MediaQuery.of(context).size.height * 0.09,
+              fit: BoxFit.contain,
+            ),
+            SizedBox(height: 8 * scaleFactor),
+            RichText(
+              textAlign: TextAlign.center,
+              text: TextSpan(
+                style: TextStyle(
+                  fontSize: 16 * scaleFactor,
+                  fontFamily: 'Arial',
+                ),
+                children: const [
+                  TextSpan(
+                    text: 'AntiqueSoft\n',
+                    style: TextStyle(
+                      color: Color(0xFF0C2A5D),
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  TextSpan(
+                    text: 'Web Inquiry',
+                    style: TextStyle(
+                      color: Color(0xFF0C2A5D),
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
         ),
       ),
     );

@@ -31,11 +31,41 @@ class _LoginScreenState extends State<LoginScreen> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 SizedBox(height: 80 * scaleFactor),
-                SvgPicture.asset(
-                  'assets/logo.svg',
-                  width: MediaQuery.of(context).size.width*0.6,
-                  height: MediaQuery.of(context).size.height*0.15,
-                  fit: BoxFit.contain,
+                Column(
+                  children: [
+                    SvgPicture.asset(
+                      'assets/logo.svg',
+                      width: MediaQuery.of(context).size.width * 0.2,
+                      height: MediaQuery.of(context).size.height * 0.09,
+                      fit: BoxFit.contain,
+                    ),
+                    SizedBox(height: 8 * scaleFactor),
+                    RichText(
+                      textAlign: TextAlign.center,
+                      text: TextSpan(
+                        style: TextStyle(
+                          fontSize: 16 * scaleFactor,
+                          fontFamily: 'Arial',
+                        ),
+                        children: const [
+                          TextSpan(
+                            text: 'AntiqueSoft\n',
+                            style: TextStyle(
+                              color: Color(0xFF0C2A5D),
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          TextSpan(
+                            text: 'Web Inquiry',
+                            style: TextStyle(
+                              color: Color(0xFF0C2A5D),
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
                 SizedBox(height: 38 * scaleFactor),
                 Column(
@@ -97,8 +127,6 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                     ),
                     SizedBox(height: 16 * scaleFactor),
-
-                    /// ✅ Button or Loading Spinner
                     loginViewModel.isLoading
                         ? const CircularProgressIndicator()
                         : SizedBox(

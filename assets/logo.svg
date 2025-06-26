@@ -1,13 +1,9 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="178" height="257.911" viewBox="0 0 178 257.911">
-  <g id="Group_3323" data-name="Group 3323" transform="translate(-115 -199.089)">
-    <text id="AntiqueSoft_Web_Inquiry" data-name="AntiqueSoft
-Web Inquiry" transform="translate(115 408)" fill="#172b4d" font-size="30" font-family="DMSans-Bold, 'DM Sans \31 4pt'" font-weight="700"><tspan x="0" y="0">AntiqueSoft</tspan><tspan x="0" y="40">Web Inquiry</tspan></text>
-    <g id="Group_3321" data-name="Group 3321" transform="translate(166.771 -868.792)">
-      <g id="Group_3322" data-name="Group 3322" transform="translate(-47.771 1067.881)">
-        <path id="Path_884" data-name="Path 884" d="M-56.373,1300.062h55.33l58.167-144.179H-1.044Z" transform="translate(56.373 -1155.882)" fill="#7e3f00"/>
-        <path id="Path_883" data-name="Path 883" d="M24.324,1300.681H76.287L20.874,1156.325h-59.2Z" transform="translate(94.713 -1156.325)" fill="#ff8500"/>
-      </g>
-      <path id="Path_885" data-name="Path 885" d="M-46.017,1242.629l27.614-23.9,29.674,23.9H-46.017Z" transform="translate(57.203 -30.569)" fill="#036"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="202.986" height="171.368" viewBox="0 0 202.986 171.368">
+  <g id="Group_3323" transform="translate(428.484 -1500.596)">
+    <g id="Group_3322" transform="translate(-428.484 1500.596)">
+      <path id="Path_884" d="M-229.484,1907.751h65.677L-94.77,1736.6h-69.038Z" transform="translate(229.484 -1736.596)" fill="#7e421c"/>
+      <path id="Path_883" d="M-92.258,1907.964h61.681L-96.353,1736.6h-70.284Z" transform="translate(233.563 -1736.596)" fill="#ff8500"/>
     </g>
+    <path id="Path_885" d="M-362.766,1663.048l32.783-28.359,35.221,28.359Z" transform="translate(4.265 8.703)" fill="#1c3665"/>
   </g>
 </svg>
