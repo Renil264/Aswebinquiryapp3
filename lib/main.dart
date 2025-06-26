@@ -52,7 +52,6 @@ class AntiqueSoftApp extends StatefulWidget {
 }
 
 class _AntiqueSoftAppState extends State<AntiqueSoftApp> {
-  bool _initialized = false;
   bool _error = false;
   String _errorMessage = '';
 
@@ -92,7 +91,6 @@ class _AntiqueSoftAppState extends State<AntiqueSoftApp> {
 
       if (mounted) {
         setState(() {
-          _initialized = true;
         });
       }
       
@@ -251,7 +249,6 @@ class _AntiqueSoftAppState extends State<AntiqueSoftApp> {
                     onPressed: () {
                       setState(() {
                         _error = false;
-                        _initialized = false;
                         _errorMessage = '';
                       });
                       _initializeApp();

@@ -92,7 +92,7 @@ class _SalesReportState extends State<SalesReport> {
   String? errorMessage;
   
   // API configuration
-  static const String baseUrl = 'http://192.168.10.26/Antiquesoft/Home';
+ 
 
   @override
   void initState() {

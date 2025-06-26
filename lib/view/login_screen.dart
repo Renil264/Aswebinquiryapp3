@@ -33,21 +33,27 @@ class _LoginScreenState extends State<LoginScreen> {
                 SizedBox(height: 80 * scaleFactor),
                 Column(
                   children: [
-                    SvgPicture.asset(
-                      'assets/logo.svg',
-                      width: MediaQuery.of(context).size.width * 0.2,
-                      height: MediaQuery.of(context).size.height * 0.09,
-                      fit: BoxFit.contain,
+                    SizedBox(
+                      width: 100, // fixed width for consistency
+                      child: AspectRatio(
+                        aspectRatio: 1, // maintains square shape
+                        child: FittedBox(
+                          fit: BoxFit.contain,
+                          child: SvgPicture.asset(
+                            'assets/logo.svg',
+                          ),
+                        ),
+                      ),
                     ),
-                    SizedBox(height: 8 * scaleFactor),
+                    const SizedBox(height: 10),
                     RichText(
                       textAlign: TextAlign.center,
-                      text: TextSpan(
+                      text: const TextSpan(
                         style: TextStyle(
-                          fontSize: 16 * scaleFactor,
+                          fontSize: 18,
                           fontFamily: 'Arial',
                         ),
-                        children: const [
+                        children: [
                           TextSpan(
                             text: 'AntiqueSoft\n',
                             style: TextStyle(
@@ -59,7 +65,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             text: 'Web Inquiry',
                             style: TextStyle(
                               color: Color(0xFF0C2A5D),
-                              fontWeight: FontWeight.w500,
+                              fontWeight: FontWeight.bold,
                             ),
                           ),
                         ],
