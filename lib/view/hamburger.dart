@@ -117,7 +117,7 @@ class DrawerMenu extends StatelessWidget {
     try {
       final response = await http.post(url, headers: headers, body: body);
       if (response.statusCode == 200) {
-        final appData = Provider.of<AppData>(context, listen: false);
+        Provider.of<AppData>(context, listen: false);
 
         final loginViewModel = Provider.of<LoginViewModel>(context, listen: false);
         await loginViewModel.logout();

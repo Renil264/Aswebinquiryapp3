@@ -62,7 +62,7 @@ class _LoginScreenContentState extends State<_LoginScreenContent> {
                       padding: EdgeInsets.symmetric(vertical: 20 * scaleFactor),
                       child: LayoutBuilder(
                         builder: (context, constraints) {
-                          double logoWidth = constraints.maxWidth * 0.45;
+                          double logoWidth = constraints.maxWidth * 0.28; // 🔹 Changed from 0.45 to 0.32
                           return Center(
                             child: SvgPicture.asset(
                               'assets/logo.svg',
@@ -73,7 +73,7 @@ class _LoginScreenContentState extends State<_LoginScreenContent> {
                         },
                       ),
                     ),
-                    const SizedBox(height: 7),
+                    const SizedBox(height: 0),
                     RichText(
                       textAlign: TextAlign.center,
                       text: const TextSpan(
