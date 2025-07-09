@@ -42,7 +42,7 @@ class _LoginScreenContentState extends State<_LoginScreenContent> {
   Widget build(BuildContext context) {
     final loginViewModel = context.watch<LoginViewModel>();
     final screenWidth = MediaQuery.of(context).size.width;
-    double scaleFactor = screenWidth / 422;
+    double scaleFactor = screenWidth / 400;
 
     // 🔄 Clamp scaleFactor for better consistency across screen sizes
     scaleFactor = scaleFactor.clamp(0.9, 1.2);
@@ -51,7 +51,7 @@ class _LoginScreenContentState extends State<_LoginScreenContent> {
       backgroundColor: Colors.white,
       body: Center(
         child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 480),
+          constraints: const BoxConstraints(maxWidth: 500),
           child: Padding(
             padding: EdgeInsets.symmetric(horizontal: 22.0 * scaleFactor),
             child: LayoutBuilder(
@@ -72,22 +72,22 @@ class _LoginScreenContentState extends State<_LoginScreenContent> {
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        SizedBox(height: 60 * scaleFactor),
+        SizedBox(height: 50 * scaleFactor),
         Column(
           children: [
             Padding(
               padding: EdgeInsets.symmetric(vertical: 20 * scaleFactor),
               child: SvgPicture.asset(
                 'assets/logo.svg',
-                width: 110 * scaleFactor,
+                width: 120 * scaleFactor,
                 fit: BoxFit.contain,
               ),
             ),
-            const SizedBox(height: 7),
+            const SizedBox(height: 1),
             RichText(
               textAlign: TextAlign.center,
               text: const TextSpan(
-                style: TextStyle(fontSize: 18, fontFamily: 'Arial'),
+                style: TextStyle(fontSize: 25, fontFamily: 'Arial'),
                 children: [
                   TextSpan(
                     text: 'AntiqueSoft\n',
