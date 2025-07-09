@@ -72,7 +72,7 @@ class _LoginScreenContentState extends State<_LoginScreenContent> {
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        SizedBox(height: 50 * scaleFactor),
+        SizedBox(height: 10 * scaleFactor),
         Column(
           children: [
             Padding(
@@ -158,12 +158,12 @@ class _LoginScreenContentState extends State<_LoginScreenContent> {
                 ],
               ),
             ),
-            SizedBox(height: 16 * scaleFactor),
+            SizedBox(height: 20 * scaleFactor),
             loginViewModel.isLoading
                 ? const CircularProgressIndicator()
                 : SizedBox(
-                    width: 173 * scaleFactor,
-                    height: 64 * scaleFactor,
+                    width: 190 * scaleFactor,
+                    height: 65 * scaleFactor,
                     child: ElevatedButton(
                       onPressed: () async {
                         bool success = await loginViewModel.login(context);
@@ -217,7 +217,7 @@ class _LoginScreenContentState extends State<_LoginScreenContent> {
     required double scaleFactor,
   }) {
     return SizedBox(
-      width: 366 * scaleFactor,
+      width: 400 * scaleFactor,
       height: 60 * scaleFactor,
       child: TextField(
         controller: controller,
@@ -275,7 +275,7 @@ class _LoginScreenContentState extends State<_LoginScreenContent> {
     required double scaleFactor,
   }) {
     return SizedBox(
-      width: 366 * scaleFactor,
+      width: 400 * scaleFactor,
       height: 60 * scaleFactor,
       child: TextField(
         controller: controller,
