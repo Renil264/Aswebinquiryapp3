@@ -158,8 +158,8 @@ class _LoginScreenContentState extends State<_LoginScreenContent> {
     
     // Responsive logo size
     double getLogoSize() {
-      if (screenWidth < 600) return 100; // Mobile
-      if (screenWidth < 1024) return 140; // Tablet
+      if (screenWidth < 600) return 130; // Mobile
+      if (screenWidth < 1024) return 180; // Tablet
       return 160; // Desktop
     }
     
@@ -171,8 +171,8 @@ class _LoginScreenContentState extends State<_LoginScreenContent> {
     }
     
     double getSubTitleSize() {
-      if (screenWidth < 600) return 16; // Mobile
-      if (screenWidth < 1024) return 20; // Tablet
+      if (screenWidth < 600) return 24; // Mobile
+      if (screenWidth < 1024) return 32; // Tablet
       return 22; // Desktop
     }
     
@@ -211,7 +211,7 @@ class _LoginScreenContentState extends State<_LoginScreenContent> {
                 fontSize: getMainTitleSize(),
                 fontWeight: FontWeight.bold,
                 color: const Color(0xFF0C2A5D),
-                letterSpacing: -0.5,
+                letterSpacing: 0.5,
               ),
             ),
             SizedBox(height: screenWidth < 600 ? 2 : 6),
@@ -219,8 +219,8 @@ class _LoginScreenContentState extends State<_LoginScreenContent> {
               'Web Inquiry',
               style: TextStyle(
                 fontSize: getSubTitleSize(),
-                fontWeight: FontWeight.w500,
-                color: const Color(0xFF0C2A5D).withOpacity(0.8),
+                fontWeight: FontWeight.bold,
+                color: const Color(0xFF0C2A5D),
                 letterSpacing: 0.5,
               ),
             ),
