@@ -817,38 +817,42 @@ Future<void> _fetchMonthlySalesData() async {
                               ],
                             ),
                             Stack(
-                            children: [
-                              IconButton(
-                                icon: const Icon(Icons.notifications_outlined),
-                                color: Colors.black,
-                                onPressed: _navigateToNotificationPage,
-                              ),
-                              if (_notificationCount > 0) // Only show badge if count > 0
-                                Positioned(
-                                  right: 8,
-                                  top: 8,
-                                  child: Container(
-                                    padding: const EdgeInsets.all(2),
-                                    decoration: BoxDecoration(
-                                      color: Colors.red,
-                                      borderRadius: BorderRadius.circular(6),
-                                    ),
-                                    constraints: const BoxConstraints(
-                                      minWidth: 14,
-                                      minHeight: 14,
-                                    ),
-                                    child: Text(
-                                      _notificationCount > 99 ? '99+' : _notificationCount.toString(),
-                                      style: const TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 8,
+                              children: [
+                                IconButton(
+                                  icon: SvgPicture.asset(
+                                    'assets/notifications.svg', // Path to your SVG file
+                                    width: 28,
+                                    height: 27,
+                                    
+                                  ),
+                                  onPressed: _navigateToNotificationPage,
+                                ),
+                                if (_notificationCount > 0) // Show badge if count > 0
+                                  Positioned(
+                                    right: 8,
+                                    top: 8,
+                                    child: Container(
+                                      padding: const EdgeInsets.all(2),
+                                      decoration: BoxDecoration(
+                                        color: Colors.red,
+                                        borderRadius: BorderRadius.circular(6),
                                       ),
-                                      textAlign: TextAlign.center,
+                                      constraints: const BoxConstraints(
+                                        minWidth: 14,
+                                        minHeight: 14,
+                                      ),
+                                      child: Text(
+                                        _notificationCount > 99 ? '99+' : _notificationCount.toString(),
+                                        style: const TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 8,
+                                        ),
+                                        textAlign: TextAlign.center,
+                                      ),
                                     ),
                                   ),
-                                ),
-                            ],
-                          ),
+                              ],
+                            ),
                             IconButton(
                               icon: const Icon(Icons.menu),
                               color: Colors.black,
@@ -1072,7 +1076,7 @@ Future<void> _fetchMonthlySalesData() async {
                           children: [
                             Expanded(
                               child: selectedFilter == 'Yearly'
-                                  ? YearlySalesReportPage(
+                                  ? const YearlySalesReportPage(
                                        // Pass close callback
                                     )
                                   : SalesReport(
