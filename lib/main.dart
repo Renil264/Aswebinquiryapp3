@@ -16,7 +16,8 @@ import 'Services/notification.dart';
 import 'viewmodel/login_viewmodel.dart';
 
 // Background message handler
-@pragma('vm:entry-point') // Ensures iOS handles background properly
+@pragma('vm:entry-point')
+ // Ensures iOS handles background properly
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   try {
     await Firebase.initializeApp();
