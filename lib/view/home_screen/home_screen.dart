@@ -16,8 +16,9 @@ import 'package:provider/provider.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import '../report_screen/report_screen.dart';
+import '../report_screen/report_screen.dart' ;
 import 'dart:async';
+import 'package:intl/intl.dart';
 
 class HomeScreen extends StatefulWidget {
   final bool showWelcomeMessage;
@@ -36,6 +37,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
   late Animation<double> _animation;
   List<FlSpot> dailySalesSpots = [];
   List<String> dailySalesLabels = [];
+  List<String> dailySalesFullLabels = [];
   bool isLoadingDailySales = false;
   double maxDailySales = 5000.0;
 
@@ -235,12 +237,19 @@ Future<void> _fetchYearlyStats() async {
       final Map<String, dynamic> data = json.decode(response.body);
       
       setState(() {
-        yearlyStats = {
-          'totalItems': (data['totalQuantitySold'] ?? 0).toString(),
-          'totalSales': '\$${(data['totalSalesAmount'] ?? 0.0).toStringAsFixed(2)}',
-        };
-        isLoadingYearlyStats = false;
-      });
+  // Format the total sales amount with commas
+      double totalSalesAmount = (data['totalSalesAmount'] ?? 0.0).toDouble();
+      String formattedSales = NumberFormat.currency(
+        symbol: '\$',
+        decimalDigits: 2,
+      ).format(totalSalesAmount);
+      
+      yearlyStats = {
+        'totalItems': NumberFormat('#,###').format(data['totalQuantitySold'] ?? 0),
+        'totalSales': formattedSales,
+      };
+      isLoadingYearlyStats = false;
+    });
     } else {
       setState(() {
         yearlyStats = {
@@ -253,12 +262,12 @@ Future<void> _fetchYearlyStats() async {
     }
   } catch (e) {
     setState(() {
-      yearlyStats = {
-        'totalItems': '0',
-        'totalSales': '\$0.00',
-      };
-      isLoadingYearlyStats = false;
-    });
+    yearlyStats = {
+      'totalItems': '0',
+      'totalSales': '\$0.00',
+    };
+    isLoadingYearlyStats = false;
+  });
     print('Yearly Stats Error: $e'); // Debug print
     print('Error loading yearly stats: ${e.toString()}');
   }
@@ -293,12 +302,19 @@ Future<void> _fetchDailySalesStats() async {
       final Map<String, dynamic> data = json.decode(response.body);
       
       setState(() {
-        dailyStats = {
-          'totalItems': (data['totalItems'] ?? 0).toString(),
-          'totalSales': '\$${(data['totalSales'] ?? 0.0).toStringAsFixed(2)}',
-        };
-        isLoadingDailyStats = false;
-      });
+    // Format the total sales amount with commas
+      double totalSalesAmount = (data['totalSales'] ?? 0.0).toDouble();
+      String formattedSales = NumberFormat.currency(
+        symbol: '\$',
+        decimalDigits: 2,
+      ).format(totalSalesAmount);
+      
+      dailyStats = {
+        'totalItems': NumberFormat('#,###').format(data['totalItems'] ?? 0),
+        'totalSales': formattedSales,
+      };
+      isLoadingDailyStats = false;
+    });
     } else {
       setState(() {
         dailyStats = {
@@ -311,12 +327,12 @@ Future<void> _fetchDailySalesStats() async {
     }
   } catch (e) {
     setState(() {
-      dailyStats = {
-        'totalItems': '0',
-        'totalSales': '\$0.00',
-      };
-      isLoadingDailyStats = false;
-    });
+    dailyStats = {
+      'totalItems': '0',
+      'totalSales': '\$0.00',
+    };
+    isLoadingDailyStats = false;
+  });
     print('Daily Sales Stats Error: $e'); // Debug print
     debugPrint('Error loading daily sales stats: ${e.toString()}');
   }
@@ -385,12 +401,20 @@ Future<void> _fetchMonthlySalesStats() async {
       final Map<String, dynamic> data = json.decode(response.body);
       
       setState(() {
-        monthlyStats = {
-          'totalItems': (data['totalItems'] ?? 0).toString(),
-          'totalSales': '\$${(data['totalSales'] ?? 0.0).toStringAsFixed(2)}',
-        };
-        isLoadingMonthlyStats = false;
-      });
+  // Format the total sales amount with commas
+      double totalSalesAmount = (data['totalSales'] ?? 0.0).toDouble();
+      String formattedSales = NumberFormat.currency(
+        symbol: '\$',
+        decimalDigits: 2,
+      ).format(totalSalesAmount);
+      
+      monthlyStats = {
+        'totalItems': NumberFormat('#,###').format(data['totalItems'] ?? 0),
+        'totalSales': formattedSales,
+      };
+      isLoadingMonthlyStats = false;
+    });
+
     } else {
       setState(() {
         monthlyStats = {
@@ -525,6 +549,7 @@ Future<void> _fetchDailySalesData() async {
       // Clear existing data
       dailySalesSpots.clear();
       dailySalesLabels.clear();
+      dailySalesFullLabels.clear();
       
       // Sort the data by date to ensure proper order
       dailySales.sort((a, b) {
@@ -541,13 +566,17 @@ Future<void> _fetchDailySalesData() async {
         final String day = salesData['day'] ?? '';
         
         // Format: "Sun\n(July 1)\n2025" - Day abbreviation, date in brackets, year
-        final DateTime parsedDate = DateTime.parse(date);
         final String dayAbbr = _getDayAbbreviation(day);
+        final String simpleLabel = dayAbbr;
+
+      // Full label for tooltip
+        final DateTime parsedDate = DateTime.parse(date);
         final String monthName = _getMonthName(parsedDate.month);
-        final String formattedLabel = '$dayAbbr\n$monthName ${parsedDate.day}\n${parsedDate.year}';
-        
+        final String fullLabel = '$dayAbbr\n($monthName ${parsedDate.day})\n${parsedDate.year}';
+
         dailySalesSpots.add(FlSpot(i.toDouble(), totalSales));
-        dailySalesLabels.add(formattedLabel);
+        dailySalesLabels.add(simpleLabel); // Simple for X-axis
+        dailySalesFullLabels.add(fullLabel); 
       }
       
       // Set fixed max Y value to 100
@@ -891,22 +920,29 @@ Future<void> _fetchMonthlySalesData() async {
                             
                             // Welcome Section with API-fetched name
                             Padding(
-                              padding: EdgeInsets.symmetric(
-                                horizontal: screenSize.width * 0.05,
-                              ),
-                              child: Row(
-                                children: [
-                                  Column(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: screenSize.width * 0.05,
+                            ),
+                            child: Row(
+                              children: [
+                                Flexible(
+                                  flex: 3,
+                                  child: Column(
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
                                       Row(
                                         children: [
-                                          Text(
-                                            'Hi ${_getFirstName(vendorName)}',
-                                            style: const TextStyle(
-                                              fontSize: 24,
-                                              fontWeight: FontWeight.bold,
-                                              color: Color(0xFF2D3142),
+                                          Flexible(
+                                            child: Text(
+                                              'Hi ${_getFirstName(vendorName)}',
+                                              style: const TextStyle(
+                                                fontSize: 24,
+                                                fontWeight: FontWeight.bold,
+                                                color: Color(0xFF2D3142),
+                                              ),
+                                              textScaleFactor: 1.0, // Force consistent text scaling
+                                              maxLines: 1,
+                                              overflow: TextOverflow.ellipsis,
                                             ),
                                           ),
                                           if (isLoadingVendorName) ...[
@@ -931,17 +967,23 @@ Future<void> _fetchMonthlySalesData() async {
                                           fontWeight: FontWeight.bold,
                                           color: Color(0xFF2D3142),
                                         ),
+                                        textScaleFactor: 1.0, // Force consistent text scaling
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
                                       ),
                                     ],
                                   ),
-                                  const Spacer(),
-                                  SvgPicture.asset(
+                                ),
+                                Flexible(
+                                  flex: 1,
+                                  child: SvgPicture.asset(
                                     'assets/welcome.svg',
                                     height: screenSize.height * 0.12,
                                   ),
-                                ],
-                              ),
+                                ),
+                              ],
                             ),
+                          ),
 
                             SizedBox(height: screenSize.height * 0.03),
 
@@ -971,28 +1013,34 @@ Future<void> _fetchMonthlySalesData() async {
 
                             // View Report Button
                             Center(
-                              child: SizedBox(
-                                width: isTablet ? screenSize.width * 0.4: 155,
-                                height: screenSize.height * 0.06,
-                                child: ElevatedButton(
-                                  onPressed: _toggleReport,
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: const Color(0xFFFF6B00),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(30),
-                                    ),
+                            child: SizedBox(
+                              width: isTablet ? screenSize.width * 0.4 : 155,
+                              height: screenSize.height * 0.06,
+                              child: ElevatedButton(
+                                onPressed: _toggleReport,
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: const Color(0xFFFF6B00),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(30),
                                   ),
-                                  child: const Text(
+                                ),
+                                child: const FittedBox(
+                                  fit: BoxFit.scaleDown,
+                                  child: Text(
                                     'View Sales',
                                     style: TextStyle(
                                       fontSize: 16,
                                       fontWeight: FontWeight.normal,
-                                      color: Colors.white
+                                      color: Colors.white,
                                     ),
+                                    textAlign: TextAlign.center,
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
                                   ),
                                 ),
                               ),
                             ),
+                          ),
 
                             SizedBox(height: screenSize.height * 0.03),
 
@@ -1109,93 +1157,109 @@ Future<void> _fetchMonthlySalesData() async {
   }
 
   Widget _buildFilterButton(String text, double width) {
-    bool isSelected = selectedFilter == text;
-    return GestureDetector(
-      onTap: () {
-        setState(() {
-          selectedFilter = text;
-        });
-        // Refresh data when filter is selected
-        if (text == 'Daily') {
-          _fetchDailySalesData();
-          _fetchDailySalesStats(); // Add this line
-        } else if (text == 'Monthly') {
-          _fetchMonthlySalesData();
-          _fetchMonthlySalesStats();
-        } else if (text == 'Yearly') {
-          _fetchYearlySalesData();
-          _fetchYearlyStats();
-        }
-      },
-      child: Container(
-        width: width,
-        height: 42.5,
-        decoration: BoxDecoration(
-          color: isSelected ? const Color(0xFFFF8500) : Colors.grey,
-          borderRadius: BorderRadius.circular(1),
-        ),
-        child: Center(
-          child: Text(
-            text,
-            style: TextStyle(
-              color: isSelected ? Colors.white : Colors.white,
-              fontWeight: FontWeight.normal,
-              fontSize: 13,
-            ),
+  bool isSelected = selectedFilter == text;
+  return GestureDetector(
+    onTap: () {
+      setState(() {
+        selectedFilter = text;
+      });
+      // Refresh data when filter is selected
+      if (text == 'Daily') {
+        _fetchDailySalesData();
+        _fetchDailySalesStats();
+      } else if (text == 'Monthly') {
+        _fetchMonthlySalesData();
+        _fetchMonthlySalesStats();
+      } else if (text == 'Yearly') {
+        _fetchYearlySalesData();
+        _fetchYearlyStats();
+      }
+    },
+    child: Container(
+      width: width,
+      height: 50, // Increased height to accommodate larger text
+      decoration: BoxDecoration(
+        color: isSelected ? const Color(0xFFFF8500) : Colors.grey,
+        borderRadius: BorderRadius.circular(1),
+      ),
+      child: Center(
+        child: Text(
+          text,
+          style: const TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.normal,
+            fontSize: 13,
           ),
+          textScaleFactor: 1.0, // Force consistent text scaling
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
         ),
       ),
-    );
-  }
+    ),
+  );
+}
 
   Widget _buildStatCard(String title, String value, Size screenSize) {
-    return Container(
-      height: screenSize.height * 0.15,
-      padding: EdgeInsets.all(screenSize.width * 0.04),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
+  return Container(
+    height: screenSize.height * 0.16, // Slightly increased height
+    padding: EdgeInsets.all(screenSize.width * 0.04),
+    decoration: BoxDecoration(
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(12),
+    ),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Flexible(
+          child: Text(
             title,
             style: const TextStyle(
               fontSize: 14,
               color: Color(0xFF11AB86),
             ),
+            textScaleFactor: 1.0, // Force consistent text scaling
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
           ),
-          const Spacer(),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                value,
-                style: TextStyle(
-                  fontSize: screenSize.width > 600 ? 24 : 20,
-                  fontWeight: FontWeight.bold,
-                  color: const Color(0xFF2D3142),
+        ),
+        const Spacer(),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Flexible(
+              flex: 3,
+              child: FittedBox(
+                fit: BoxFit.scaleDown,
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  value,
+                  style: TextStyle(
+                    fontSize: screenSize.width > 600 ? 24 : 20,
+                    fontWeight: FontWeight.bold,
+                    color: const Color(0xFF2D3142),
+                  ),
+                  textScaleFactor: 1.0, // Force consistent text scaling
                 ),
               ),
-              Container(
-                padding: const EdgeInsets.all(4),
-                decoration: BoxDecoration(
-                  color: const Color(0xFF00BFA6).withOpacity(0.1),
-                  shape: BoxShape.circle,
-                ),
-                child: SvgPicture.asset(
-                  'assets/trending.svg',
-                  width: screenSize.width * 0.06,
-                  height: screenSize.width * 0.06,
-                ),
+            ),
+            Container(
+              padding: const EdgeInsets.all(4),
+              decoration: BoxDecoration(
+                color: const Color(0xFF00BFA6).withOpacity(0.1),
+                shape: BoxShape.circle,
               ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
+              child: SvgPicture.asset(
+                'assets/trending.svg',
+                width: screenSize.width * 0.06,
+                height: screenSize.width * 0.06,
+              ),
+            ),
+          ],
+        ),
+      ],
+    ),
+  );
+}
 
 Widget _buildChartSection(Size screenSize) {
   return Container(
@@ -1216,40 +1280,47 @@ Widget _buildChartSection(Size screenSize) {
         ),
         const SizedBox(height: 4),
         Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Flexible(
+            child: Text(
               '$selectedFilter Sales',
               style: const TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
                 color: Color(0xFFFF8500),
               ),
+              textScaleFactor: 1.0, // Force consistent text scaling
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
             ),
-            // Display month for Monthly filter or year for Yearly filter
-            if (selectedFilter == 'Monthly' && currentMonth.isNotEmpty)
-              Text(
-                currentMonth,
-                style: const TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.normal,
-                  color: Color(0xFF2D3142),
-                ),
+          ),
+          // Display month for Monthly filter or year for Yearly filter
+          if (selectedFilter == 'Monthly' && currentMonth.isNotEmpty)
+            Text(
+              currentMonth,
+              style: const TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.normal,
+                color: Color(0xFF2D3142),
               ),
-            if (selectedFilter == 'Yearly' && currentYear > 0)
-              Text(
-                currentYear.toString(),
-                style: const TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.normal,
-                  color: Color(0xFF2D3142),
-                ),
+              textScaleFactor: 1.0, // Force consistent text scaling
+            ),
+          if (selectedFilter == 'Yearly' && currentYear > 0)
+            Text(
+              currentYear.toString(),
+              style: const TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.normal,
+                color: Color(0xFF2D3142),
               ),
-          ],
-        ),
-        SizedBox(height: screenSize.height * 0.02),
+              textScaleFactor: 1.0, // Force consistent text scaling
+            ),
+        ],
+      ),
+              SizedBox(height: screenSize.height * 0.02),
         SizedBox(
-          height: screenSize.height * 0.4,
+          height: screenSize.height * 0.5,
           child: _buildChart(screenSize),
         ),
       ],
@@ -1288,51 +1359,53 @@ Widget _buildChartSection(Size screenSize) {
   }
 
   Widget _buildNavItem(String iconPath, String label, bool isSelected, Size screenSize) {
-    double iconSize = screenSize.width > 600 ? 40 : 40;
-    
-    return GestureDetector(
-      onTap: () {
-        if (label == 'Reports') {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const ReportsPage()),
-          );
-        }
-      },
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          SvgPicture.asset(
-            iconPath,
-            width: iconSize,
-            height: iconSize,
+  double iconSize = screenSize.width > 600 ? 40 : 40;
+  return GestureDetector(
+    onTap: () {
+      if (label == 'Reports') {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const ReportsPage()),
+        );
+      }
+    },
+    child: Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        SvgPicture.asset(
+          iconPath,
+          width: iconSize,
+          height: iconSize,
+        ),
+        SizedBox(height: screenSize.height * 0.002),
+        Text(
+          label,
+          style: TextStyle(
+            fontSize: screenSize.width > 600 ? 14 : 12,
+            fontWeight: FontWeight.normal,
+            color: const Color(0xFFFF8500),
           ),
-          SizedBox(height: screenSize.height * 0.002),
-          Text(
-            label,
-            style: TextStyle(
-              fontSize: screenSize.width > 600 ? 14 : 12,
-              fontWeight: FontWeight.normal,
-              color: const Color(0xFFFF8500),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+          textScaleFactor: 1.0, // Force consistent text scaling
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+        ),
+      ],
+    ),
+  );
+}
 
 Widget _buildChart(Size screenSize) {
   final Map<String, Map<String, dynamic>> chartConfigs = {
   'Daily': {
     'labels': dailySalesLabels.isNotEmpty ? dailySalesLabels : ['Sun\n(Jun 15)', 'Mon\n(Jun 16)', 'Tue\n(Jun 17)', 'Wed\n(Jun 18)', 'Thu\n(Jun 19)', 'Fri\n(Jun 20)', 'Sat\n(Jun 21)'],
     'maxY': 500.0, // Fixed to 100
-    'interval': 50.0,
+    'interval': 100.0,
     'spots': dailySalesSpots.isNotEmpty ? dailySalesSpots : <FlSpot>[],
   },
 'Monthly': {
   'labels': monthlySalesLabels,
   'maxY': 5000.0,
-  'interval': 500.0, // Dynamic interval based on max value
+  'interval': 1000.0, // Dynamic interval based on max value
   'spots': monthlySalesSpots.isNotEmpty ? monthlySalesSpots : const [
     FlSpot(0, 2000),
     FlSpot(1, 4000),
@@ -1343,7 +1416,7 @@ Widget _buildChart(Size screenSize) {
 'Yearly': {
   'labels': yearlySalesLabels,
   'maxY': 20000.0,
-  'interval': 2000.0, // Dynamic interval based on max value
+  'interval': 5000.0, // Dynamic interval based on max value
   'spots': yearlySalesSpots.isNotEmpty ? yearlySalesSpots : const [
     FlSpot(0, 15000),
     FlSpot(1, 25000),
@@ -1423,8 +1496,9 @@ Widget chartWidget = SizedBox(
                             child: Text(
                               value.toInt().toString(),
                               style: TextStyle(
-                                fontSize: screenSize.width > 600 ? 10 : 8,
+                                fontSize: screenSize.width > 600 ? 14 : 12,
                                 color: Colors.black,
+                                fontWeight: FontWeight.w900
                               ),
                               textAlign: TextAlign.right,
                             ),
@@ -1442,13 +1516,14 @@ Widget chartWidget = SizedBox(
                             return const SizedBox.shrink();
                           }
                           return Padding(
-                            padding: EdgeInsets.only(top: screenSize.height * 0.005),
+                            padding: EdgeInsets.only(top: screenSize.height * 0.010),
                             child: Text(
                               currentConfig['labels'][value.toInt()],
                               style: TextStyle(
-                                fontSize: screenSize.width > 600 ? 10 : 5, // Slightly smaller font for 3 lines
+                                fontSize: screenSize.width > 600 ? 14 : 12, // Slightly smaller font for 3 lines
                                 color: Colors.black,
-                                fontWeight: FontWeight.normal,
+                                fontWeight: FontWeight.w900,
+                                
                               ),
                               textAlign: TextAlign.center,
                             ),
@@ -1476,7 +1551,7 @@ Widget chartWidget = SizedBox(
                       barWidth: screenSize.width * 0.005,
                       dotData: FlDotData(
                         show: true,
-                        getDotPainter: (spot, percent, barData, index) {
+                        getDotPainter: (spot, percent, barData, index){
                           return FlDotCirclePainter(
                             radius: screenSize.width * 0.007,
                             color: Colors.white,
@@ -1501,23 +1576,61 @@ Widget chartWidget = SizedBox(
                       tooltipRoundedRadius: 8,
                       getTooltipItems: (List<LineBarSpot> touchedSpots) {
                         return touchedSpots.map((LineBarSpot touchedSpot) {
-                          String label = currentConfig['labels'][touchedSpot.x.toInt()];
-                          label = label.replaceAll('\n', ' ');
+                          String label;
+                          if (selectedFilter == 'Daily' && dailySalesFullLabels.isNotEmpty) {
+                          // For daily, show the full date format in tooltip
+                            int index = touchedSpot.x.toInt();
+                            if (index < dailySalesFullLabels.length) {
+                              label = dailySalesFullLabels[index];
+                            } else {
+                              label = 'Day ${index + 1}';
+                            }
+                          } else {
+                            label = currentConfig['labels'][touchedSpot.x.toInt()];
+                            label = label.replaceAll('\n', ' ');
+                          }
                           return LineTooltipItem(
                             '$label\n\$${touchedSpot.y.toStringAsFixed(2)}',
                             TextStyle(
                               color: Colors.white,
-                              fontSize: screenSize.width > 600 ? 12 : 10,
+                              fontSize: screenSize.width > 600 ? 16 : 14,
                             ),
                           );
                         }).toList();
                       },
                     ),
+                    touchCallback: (FlTouchEvent event, LineTouchResponse? touchResponse) {
+                      // This will trigger a rebuild when touch events occur
+                      if (event is FlTapUpEvent || event is FlPanUpdateEvent) {
+                        setState(() {});
+                      }
+                    },
+                    getTouchedSpotIndicator: (LineChartBarData barData, List<int> spotIndexes) {
+                      return spotIndexes.map((spotIndex) {
+                        return TouchedSpotIndicatorData(
+                          FlLine(
+                            color: const Color(0xFF00BFA6),
+                            strokeWidth: 3,
+                          ),
+                          FlDotData(
+                            show: true,
+                            getDotPainter: (spot, percent, barData, index) {
+                              return FlDotCirclePainter(
+                                radius: screenSize.width * 0.015, // Enlarged radius when touched
+                                color: Colors.white,
+                                strokeWidth: 3,
+                                strokeColor: const Color(0xFF00BFA6),
+                              );
+                            },
+                          ),
+                        );
+                      }).toList();
+                    },
                   ),
                 ),
               ),
-  ),
-);
+            ),
+          );
 
   return selectedFilter == 'Yearly'
       ? SingleChildScrollView(

@@ -1,18 +1,15 @@
-import 'package:antiquewebemquiry/Constants/baseurl.dart';
 import 'package:antiquewebemquiry/Global/location.dart';
 import 'package:antiquewebemquiry/Global/vendorid.dart';
-import 'package:antiquewebemquiry/model/Payoutreportmainmodel.dart';
-import 'package:antiquewebemquiry/view/date_range.dart';
-
-import 'package:antiquewebemquiry/view/home_screen/home_screen.dart';
+import 'package:antiquewebemquiry/model/payoutmodel.dart';
+import 'package:antiquewebemquiry/viewmodel/payout_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
-import 'package:antiquewebemquiry/viewmodel/payoutreportviewmodel.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
+import 'package:antiquewebemquiry/view/date_range.dart';
+import 'package:antiquewebemquiry/view/home_screen/home_screen.dart';
+import 'package:intl/intl.dart';
 
-// Model for Monthly Payable API response
+/// Entry widget for Payout Report
 class PayoutReportPage extends StatelessWidget {
   const PayoutReportPage({super.key});
 
@@ -25,6 +22,7 @@ class PayoutReportPage extends StatelessWidget {
   }
 }
 
+/// Actual screen content separated to avoid provider being rebuilt
 class PayoutReportView extends StatefulWidget {
   const PayoutReportView({super.key});
 
@@ -33,138 +31,18 @@ class PayoutReportView extends StatefulWidget {
 }
 
 class _PayoutReportViewState extends State<PayoutReportView> {
-  MonthlyPayableResponse? monthlyPayableData;
-  MonthlyReceivableResponse? monthlyReceivableData;
-  bool isLoading = false;
-  String? errorMessage;
-  
-  // Store the final total for later use
-  double? finalTotalSales;
+  final currencyFormat = NumberFormat.currency(symbol: "\$", decimalDigits: 2);
+  bool _firstOpen = true; // ✅ Track first page open
 
   @override
   void initState() {
     super.initState();
-    // Load initial data with default date range if needed
-    _loadData();
-  }
-
-  void _navigateToHome(BuildContext context) {
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (context) => const HomeScreen()),
-    );
-  }
-
-  Future<void> _loadData({DateTimeRange? dateRange}) async {
-    setState(() {
-      isLoading = true;
-      errorMessage = null;
-    });
-
-    try {
-      // Default date range if not provided
-      final now = DateTime.now();
-      final startDate = dateRange?.start ?? DateTime(now.year, now.month, 1);
-      final endDate = dateRange?.end ?? DateTime(now.year, now.month + 1, 0);
-
-      // Load both APIs simultaneously
-      final futures = await Future.wait([
-        _fetchMonthlyPayable(
-          location: Location.location,
-          vendorId: Vendor.vendorid!,
-          startDate: startDate,
-          endDate: endDate,
-        ),
-        _fetchMonthlyReceivable(
-          location: Location.location,
-          vendorId: Vendor.vendorid!,
-          startDate: startDate,
-          endDate: endDate,
-        ),
-      ]);
-
-      final payableData = futures[0] as MonthlyPayableResponse;
-      final receivableData = futures[1] as MonthlyReceivableResponse;
-
-      setState(() {
-        monthlyPayableData = payableData;
-        monthlyReceivableData = receivableData;
-        // Calculate and store final total sales (Total Sales - Less)
-        final totalSales = payableData.retailSales + payableData.wholesaleSales + 
-                          payableData.onlineSales + payableData.layawaySales + payableData.salesTax;
-        final lessAmount = payableData.returnSales + payableData.voidSales;
-        finalTotalSales = totalSales - lessAmount;
-        isLoading = false;
-      });
-    } catch (e) {
-      setState(() {
-        errorMessage = e.toString();
-        isLoading = false;
-      });
-    }
-  }
-
-  String formatCurrency(double amount) {
-
-    final isNegative = amount < 0;
-    final value = amount.abs().toStringAsFixed(2);
-    return isNegative ? '-\$${value}' : '\$${value}';
-
-  }
-
-  Future<MonthlyPayableResponse> _fetchMonthlyPayable({
-    required String location,
-    required int vendorId,
-    required DateTime startDate,
-    required DateTime endDate,
-  }) async {
-    final startDateStr = startDate.toIso8601String().split('T')[0];
-    final endDateStr = endDate.toIso8601String().split('T')[0];
-    
-    final url = '$baseurl/Home/ getMonthlyPayable'
-        '?location=$location'
-        '&vendorId=$vendorId'
-        '&startDate=$startDateStr'
-        '&endDate=$endDateStr';
-
-    final response = await http.get(Uri.parse(url));
-
-    if (response.statusCode == 200) {
-      final Map<String, dynamic> data = json.decode(response.body);
-      return MonthlyPayableResponse.fromJson(data);
-    } else {
-      throw Exception('Failed to load monthly payable data: ${response.statusCode}');
-    }
-  }
-
-  Future<MonthlyReceivableResponse> _fetchMonthlyReceivable({
-    required String location,
-    required int vendorId,
-    required DateTime startDate,
-    required DateTime endDate,
-  }) async {
-    final startDateStr = startDate.toIso8601String().split('T')[0];
-    final endDateStr = endDate.toIso8601String().split('T')[0];
-    
-    final url = '$baseurl/Home/getMonthlyReceivable'
-        '?location=$location'
-        '&vendorId=$vendorId'
-        '&startDate=$startDateStr'
-        '&endDate=$endDateStr';
-
-    final response = await http.get(Uri.parse(url));
-
-    if (response.statusCode == 200) {
-      final Map<String, dynamic> data = json.decode(response.body);
-      return MonthlyReceivableResponse.fromJson(data);
-    } else {
-      throw Exception('Failed to load monthly receivable data: ${response.statusCode}');
-    }
+    // Do not auto-load anything yet, wait for user to pick a month
   }
 
   @override
   Widget build(BuildContext context) {
-    Provider.of<PayoutReportViewModel>(context);
+    final vm = context.watch<PayoutReportViewModel>();
 
     return Scaffold(
       backgroundColor: const Color(0xFFF1EDE8),
@@ -187,53 +65,69 @@ class _PayoutReportViewState extends State<PayoutReportView> {
       ),
       body: Column(
         children: [
+          // Date Range Picker
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 12),
             color: const Color(0xFFF1EDE8),
             child: DateRangePickerWidget(
               onDateRangeSelected: (DateTimeRange range) {
-                // Load data when date range changes
-                _loadData(dateRange: range);
+                setState(() {
+                  _firstOpen = false; // ✅ Hide message after first search
+                });
+                vm.getPayoutSummary(
+                  location: Location.location,
+                  vendorID: Vendor.vendorid!,
+                  fromDate: range.start,
+                  toDate: range.end,
+                );
               },
-              onSearch: () {
-                // Implement additional search functionality if needed
-              },
+              onSearch: () {},
             ),
           ),
+
+          // Report Body
           Expanded(
-            child: isLoading
-                ? const Center(child: CircularProgressIndicator())
-                : errorMessage != null
-                    ? Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              'Error: $errorMessage',
-                              style: const TextStyle(color: Colors.red),
-                              textAlign: TextAlign.center,
-                            ),
-                            const SizedBox(height: 16),
-                            ElevatedButton(
-                              onPressed: () => _loadData(),
-                              child: const Text('Retry'),
-                            ),
-                          ],
-                        ),
-                      )
-                    : SingleChildScrollView(
-                        child: Padding(
-                          padding: const EdgeInsets.all(16.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              _buildMarketPayableCard(),
-                              const SizedBox(height: 20),
-                              _buildMarketReceivableCard(),
-                            ],
-                          ),
-                        ),
+            child: Builder(
+              builder: (_) {
+                if (_firstOpen) {
+                  return const Center(
+                    child: Text(
+                      "Please choose the month",
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.grey,
                       ),
+                    ),
+                  );
+                }
+
+                if (vm.isLoading) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+                if (vm.errorMessage != null) {
+                  return Center(child: Text(vm.errorMessage!));
+                }
+                if (vm.payoutReport == null) {
+                  return const SizedBox.shrink();
+                }
+
+                final data = vm.payoutReport!;
+                return SingleChildScrollView(
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _buildMarketPayableCard(data),
+                        const SizedBox(height: 20),
+                        _buildMarketReceivableCard(data),
+                      ],
+                    ),
+                  ),
+                );
+              },
+            ),
           ),
         ],
       ),
@@ -241,29 +135,12 @@ class _PayoutReportViewState extends State<PayoutReportView> {
     );
   }
 
-  Widget _buildMarketPayableCard() {
-    if (monthlyPayableData == null) {
-      return const Card(
-        child: Padding(
-          padding: EdgeInsets.all(16.0),
-          child: Text('No data available'),
-        ),
-      );
-    }
-
-    final data = monthlyPayableData!;
-    // Calculate first total (before deducting returns and voids)
-    final firstTotalSales = data.retailSales + data.wholesaleSales + 
-                           data.onlineSales + data.layawaySales + data.salesTax;
-    // Calculate final total (after deducting returns and voids)
-    final finalTotal = firstTotalSales - (data.returnSales + data.voidSales);
-
+  /// --- Market Payable Card ---
+  Widget _buildMarketPayableCard(PayoutReportModel data) {
     return Card(
       elevation: 0,
       color: Colors.white,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(8),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -289,7 +166,6 @@ class _PayoutReportViewState extends State<PayoutReportView> {
                         fontFamily: 'DM Sans',
                         fontSize: 14,
                         color: Color(0xFF172B4D),
-                        fontWeight: FontWeight.normal
                       ),
                     ),
                     Text(
@@ -306,13 +182,13 @@ class _PayoutReportViewState extends State<PayoutReportView> {
               ],
             ),
             const SizedBox(height: 16),
-            _buildPayableRow('Retail Sales', formatCurrency(data.retailSales)),
-            _buildPayableRow('Wholesales', formatCurrency(data.wholesaleSales)),
-            _buildPayableRow('Online Sales', formatCurrency(data.onlineSales)),
-            _buildPayableRow('Layaway Sales', formatCurrency(data.layawaySales)),
-            _buildPayableRow('Sales Tax', formatCurrency(data.salesTax)),
+            _buildPayableRow('Retail Sales', currencyFormat.format(data.retailSales)),
+            _buildPayableRow('Wholesales', currencyFormat.format(data.wholeSales)),
+            _buildPayableRow('Online Sales', currencyFormat.format(data.onlineSales)),
+            _buildPayableRow('Layaway Sales', currencyFormat.format(data.layawaySales)),
+            _buildPayableRow('Sales Tax', currencyFormat.format(data.salesTax)),
             const Divider(height: 24),
-            _buildPayable('Total Sales', formatCurrency(firstTotalSales), isBold: true),
+            _buildPayable('Total Sales', currencyFormat.format(data.totalSales), isBold: true),
             const Divider(height: 24),
             const Text(
               'Less',
@@ -323,50 +199,25 @@ class _PayoutReportViewState extends State<PayoutReportView> {
               ),
             ),
             const SizedBox(height: 8),
-            _buildPayableRow('Sales Returns', formatCurrency(data.returnSales)),
-            _buildPayableRow('Voids', formatCurrency(data.voidSales)),
+            _buildPayableRow('Sales Returns', currencyFormat.format(data.salesReturns)),
+            _buildPayableRow('Voids', currencyFormat.format(data.voids)),
             const Divider(height: 24),
-            _buildPayable('Total Sales', formatCurrency(finalTotal), isBold: true),
+            _buildPayable('Total Sales', currencyFormat.format(data.totalSalesWithReturns),
+                isBold: true),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildMarketReceivableCard() {
-    if (monthlyReceivableData == null || finalTotalSales == null) {
-      return const Card(
-        child: Padding(
-          padding: EdgeInsets.all(16.0),
-          child: Text('No receivable data available'),
-        ),
-      );
-    }
-
-    final receivableData = monthlyReceivableData!;
-    final financials = receivableData.financials;
-    
-    // Calculate Commission on Sales as percentage of final total sales
-    final calculatedCommissionOnSales = (financials.flatCommissionPercent / 100) * finalTotalSales!;
-    
-    // Calculate Total (Commission + Consignment + Credit Card + Adjustments)
-    final total = calculatedCommissionOnSales + 
-                 financials.consignmentCommission + 
-                 financials.creditCardCharges + 
-                 financials.vendorAdjustments;
-    
-    // Calculate Total Due (Rental Dues + Total)
-    final totalDue = financials.rentalDues + total;
-    
-    // Calculate Final Amount (Total Sales - Total Due)
-    final finalAmount = finalTotalSales! - totalDue;
+  /// --- Market Receivable Card ---
+  Widget _buildMarketReceivableCard(PayoutReportModel data) {
+    final totalDue = data.totalSalesWithReturns - data.receivableTotal - data.rentalDues;
 
     return Card(
       elevation: 0,
       color: Colors.white,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(8),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -382,19 +233,21 @@ class _PayoutReportViewState extends State<PayoutReportView> {
               ),
             ),
             const SizedBox(height: 16),
-            _buildPayableRow('Flat Commission%', '${financials.flatCommissionPercent.toStringAsFixed(2)}%'),
-            _buildPayableRow('Commission on Sales', '\$${calculatedCommissionOnSales.toStringAsFixed(2)}'),
-            _buildPayableRow('Consignment Commission', '\$${financials.consignmentCommission.toStringAsFixed(2)}'),
-            _buildPayableRow('Credit/Debit Card Charges', '\$${financials.creditCardCharges.toStringAsFixed(2)}'),
-            _buildPayableRow('Adjustments(if any)', '\$${financials.vendorAdjustments.toStringAsFixed(2)}'),
+            _buildPayableRow('Flat Commission%', '${data.flatComm}%'),
+            _buildPayableRow('Commission on Sales', currencyFormat.format(data.commOnSales)),
+            _buildPayableRow('Consignment Commission', currencyFormat.format(data.consignComm)),
+            _buildPayableRow('Credit/Debit Card Charges', currencyFormat.format(data.ccCharges)),
+            _buildPayableRow('Adjustments(if any)', currencyFormat.format(data.adjustments)),
             const Divider(height: 24),
-            _buildPayableRow('Total', '\$${total.toStringAsFixed(2)}', isBold: true),
+            _buildPayableRow('Total', currencyFormat.format(data.receivableTotal), isBold: true),
             const Divider(height: 24),
-            _buildPayableRow('Rental Dues', '\$${financials.rentalDues.toStringAsFixed(2)}'),
+            _buildPayableRow('Rental Dues', currencyFormat.format(data.rentalDues)),
             const Divider(height: 24),
-            _buildPayable('Total Due', '\$${totalDue.toStringAsFixed(2)}', isBold: true),
+            _buildPayable('Total Due', currencyFormat.format(data.receivableTotal + data.rentalDues),
+                isBold: true),
             const Divider(height: 24),
-            _buildAutoDetect('Total Sales - Total Due', formatCurrency(finalAmount), isBold: true),
+            _buildAutoDetect('Total Sales - Total Due', currencyFormat.format(totalDue),
+                isBold: true),
             const Divider(height: 24),
           ],
         ),
@@ -402,6 +255,7 @@ class _PayoutReportViewState extends State<PayoutReportView> {
     );
   }
 
+  /// --- Common Widgets ---
   Widget _buildPayableRow(String label, String value, {bool isBold = false}) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
@@ -489,6 +343,7 @@ class _PayoutReportViewState extends State<PayoutReportView> {
     );
   }
 
+  /// --- Bottom Navigation ---
   Widget _buildBottomNavBar() {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
@@ -510,7 +365,10 @@ class _PayoutReportViewState extends State<PayoutReportView> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           GestureDetector(
-            onTap: () => _navigateToHome(context),
+            onTap: () => Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => const HomeScreen()),
+            ),
             child: _buildBottomNavItem(
               imagePath: 'assets/home.svg',
               label: 'Home',
@@ -535,11 +393,7 @@ class _PayoutReportViewState extends State<PayoutReportView> {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        SvgPicture.asset(
-          imagePath,
-          width: 40,
-          height: 40,
-        ),
+        SvgPicture.asset(imagePath, width: 40, height: 40),
         const SizedBox(height: 4),
         Text(
           label,
