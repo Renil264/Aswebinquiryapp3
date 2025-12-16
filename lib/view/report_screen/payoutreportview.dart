@@ -108,11 +108,8 @@ class _PayoutReportViewState extends State<PayoutReportView> {
                 if (vm.errorMessage != null) {
                   return Center(child: Text(vm.errorMessage!));
                 }
-                if (vm.payoutReport == null) {
-                  return const SizedBox.shrink();
-                }
 
-                final data = vm.payoutReport!;
+                final data = vm.payoutReport;
                 return SingleChildScrollView(
                   child: Padding(
                     padding: const EdgeInsets.all(16.0),

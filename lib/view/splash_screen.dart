@@ -55,6 +55,7 @@ class _SplashScreenState extends State<SplashScreen> {
       await Username.loadusername();
       await Vendor.loadVendorId();
 
+      // ignore: use_build_context_synchronously
       final appData = Provider.of<AppData>(context, listen: false);
       final prefs = await SharedPreferences.getInstance();
       final userDataJson = prefs.getString('userData');

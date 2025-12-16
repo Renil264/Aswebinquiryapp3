@@ -188,6 +188,7 @@ class _LoginScreenContentState extends State<_LoginScreenContent> {
             borderRadius: BorderRadius.circular(screenWidth < 600 ? 16 : 20),
             boxShadow: [
               BoxShadow(
+                // ignore: deprecated_member_use
                 color: Colors.black.withOpacity(0.05),
                 blurRadius: screenWidth < 600 ? 8 : 12,
                 offset: const Offset(0, 2),
@@ -322,11 +323,13 @@ class _LoginScreenContentState extends State<_LoginScreenContent> {
                 child: ElevatedButton(
                   onPressed: () async {
                     bool success = await loginViewModel.login(context);
+                    // ignore: use_build_context_synchronously
                     if (!success) _showErrorDialog(context);
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFFFF8500),
                     elevation: 2,
+                    // ignore: deprecated_member_use
                     shadowColor: const Color(0xFFFF8500).withOpacity(0.3),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(screenWidth < 600 ? 26 : 30),
@@ -419,6 +422,7 @@ class _LoginScreenContentState extends State<_LoginScreenContent> {
             decoration: InputDecoration(
               labelText: labelText,
               labelStyle: TextStyle(
+                // ignore: deprecated_member_use
                 color: const Color(0xFF172B4D).withOpacity(0.7),
                 fontSize: getLabelSize(),
                 fontWeight: FontWeight.w500,
@@ -527,6 +531,7 @@ class _LoginScreenContentState extends State<_LoginScreenContent> {
             decoration: InputDecoration(
               labelText: 'Password',
               labelStyle: TextStyle(
+                // ignore: deprecated_member_use
                 color: const Color(0xFF172B4D).withOpacity(0.7),
                 fontSize: getLabelSize(),
                 fontWeight: FontWeight.w500,

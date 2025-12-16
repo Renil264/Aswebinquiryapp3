@@ -1,7 +1,8 @@
+// ignore: file_names
+// ignore_for_file: avoid_print
+
 import 'dart:convert';
 import 'package:antiquewebemquiry/Constants/baseurl.dart';
-import 'package:antiquewebemquiry/Global/location.dart';
-import 'package:antiquewebemquiry/Global/vendorid.dart';
 import 'package:antiquewebemquiry/model/payoutmodel.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';

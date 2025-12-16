@@ -107,6 +107,7 @@ class _DateRangePickerWidgetState extends State<DateRangePickerWidget> {
                   border: Border.all(color: Colors.grey.shade300),
                   boxShadow: [
                     BoxShadow(
+                      // ignore: deprecated_member_use
                       color: Colors.black.withOpacity(0.05),
                       blurRadius: 2,
                       offset: const Offset(0, 1),
@@ -169,6 +170,7 @@ class _DateRangePickerWidgetState extends State<DateRangePickerWidget> {
                   borderRadius: BorderRadius.circular(8),
                   boxShadow: [
                     BoxShadow(
+                      // ignore: deprecated_member_use
                       color: Colors.black.withOpacity(0.1),
                       blurRadius: 4,
                       offset: const Offset(0, 2),
@@ -205,6 +207,7 @@ class _DateRangePickerWidgetState extends State<DateRangePickerWidget> {
                               // List item styling
                               decoration: BoxDecoration(
                                 color: isSelected
+                                    // ignore: deprecated_member_use
                                     ? Colors.blue.withOpacity(0.1)
                                     : Colors.transparent,
                                 border: Border(

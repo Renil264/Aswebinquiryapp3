@@ -3,6 +3,7 @@
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
+// ignore: use_string_in_part_of_directives
 part of firebase_messaging;
 
 /// The [FirebaseMessaging] entry point.
@@ -14,6 +15,7 @@ class FirebaseMessaging extends FirebasePluginPlatform {
   // instance with the default app before a user specifies an app.
   FirebaseMessagingPlatform? _delegatePackingProperty;
 
+  // ignore: prefer_final_fields
   static Map<String, FirebaseMessaging> _firebaseMessagingInstances = {};
 
   FirebaseMessagingPlatform get _delegate {

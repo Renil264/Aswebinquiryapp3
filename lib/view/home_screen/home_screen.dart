@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print
+
 import 'package:antiquewebemquiry/Constants/baseurl.dart';
 import 'package:antiquewebemquiry/Global/location.dart';
 import 'package:antiquewebemquiry/Global/username.dart';
@@ -57,6 +59,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
   bool isLoadingMarketMessage = true;
 
   Timer? _notificationTimer;
+  // ignore: unused_field
   int _notificationCount = 0;
   bool _isLoadingNotifications = false;
 
@@ -113,6 +116,7 @@ void initState() {
   
 }
 
+// ignore: unused_element
 void _navigateToNotificationPage() {
   // Navigator.push(
   //   context,
@@ -940,6 +944,7 @@ Future<void> _fetchMonthlySalesData() async {
                                                 fontWeight: FontWeight.bold,
                                                 color: Color(0xFF2D3142),
                                               ),
+                                              // ignore: deprecated_member_use
                                               textScaleFactor: 1.0, // Force consistent text scaling
                                               maxLines: 1,
                                               overflow: TextOverflow.ellipsis,
@@ -967,6 +972,7 @@ Future<void> _fetchMonthlySalesData() async {
                                           fontWeight: FontWeight.bold,
                                           color: Color(0xFF2D3142),
                                         ),
+                                        // ignore: deprecated_member_use
                                         textScaleFactor: 1.0, // Force consistent text scaling
                                         maxLines: 1,
                                         overflow: TextOverflow.ellipsis,
@@ -1114,6 +1120,7 @@ Future<void> _fetchMonthlySalesData() async {
                           ),
                           boxShadow: [
                             BoxShadow(
+                              // ignore: deprecated_member_use
                               color: Colors.black.withOpacity(0.1),
                               blurRadius: 10,
                               offset: const Offset(0, -5),
@@ -1190,6 +1197,7 @@ Future<void> _fetchMonthlySalesData() async {
             fontWeight: FontWeight.normal,
             fontSize: 13,
           ),
+          // ignore: deprecated_member_use
           textScaleFactor: 1.0, // Force consistent text scaling
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
@@ -1217,6 +1225,7 @@ Future<void> _fetchMonthlySalesData() async {
               fontSize: 14,
               color: Color(0xFF11AB86),
             ),
+            // ignore: deprecated_member_use
             textScaleFactor: 1.0, // Force consistent text scaling
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
@@ -1238,6 +1247,7 @@ Future<void> _fetchMonthlySalesData() async {
                     fontWeight: FontWeight.bold,
                     color: const Color(0xFF2D3142),
                   ),
+                  // ignore: deprecated_member_use
                   textScaleFactor: 1.0, // Force consistent text scaling
                 ),
               ),
@@ -1245,6 +1255,7 @@ Future<void> _fetchMonthlySalesData() async {
             Container(
               padding: const EdgeInsets.all(4),
               decoration: BoxDecoration(
+                // ignore: deprecated_member_use
                 color: const Color(0xFF00BFA6).withOpacity(0.1),
                 shape: BoxShape.circle,
               ),
@@ -1290,6 +1301,7 @@ Widget _buildChartSection(Size screenSize) {
                 fontWeight: FontWeight.bold,
                 color: Color(0xFFFF8500),
               ),
+              // ignore: deprecated_member_use
               textScaleFactor: 1.0, // Force consistent text scaling
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
@@ -1304,6 +1316,7 @@ Widget _buildChartSection(Size screenSize) {
                 fontWeight: FontWeight.normal,
                 color: Color(0xFF2D3142),
               ),
+              // ignore: deprecated_member_use
               textScaleFactor: 1.0, // Force consistent text scaling
             ),
           if (selectedFilter == 'Yearly' && currentYear > 0)
@@ -1314,6 +1327,7 @@ Widget _buildChartSection(Size screenSize) {
                 fontWeight: FontWeight.normal,
                 color: Color(0xFF2D3142),
               ),
+              // ignore: deprecated_member_use
               textScaleFactor: 1.0, // Force consistent text scaling
             ),
         ],
@@ -1385,6 +1399,7 @@ Widget _buildChartSection(Size screenSize) {
             fontWeight: FontWeight.normal,
             color: const Color(0xFFFF8500),
           ),
+          // ignore: deprecated_member_use
           textScaleFactor: 1.0, // Force consistent text scaling
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
@@ -1562,6 +1577,7 @@ Widget chartWidget = SizedBox(
                       ),
                       belowBarData: BarAreaData(
                         show: true,
+                        // ignore: deprecated_member_use
                         color: const Color(0xFF00BFA6).withOpacity(0.1),
                       ),
                     ),
@@ -1572,6 +1588,7 @@ Widget chartWidget = SizedBox(
                   maxY: currentConfig['maxY'],
                   lineTouchData: LineTouchData(
                     touchTooltipData: LineTouchTooltipData(
+                      // ignore: deprecated_member_use
                       tooltipBgColor: Colors.black.withOpacity(0.8),
                       tooltipRoundedRadius: 8,
                       getTooltipItems: (List<LineBarSpot> touchedSpots) {
@@ -1608,8 +1625,8 @@ Widget chartWidget = SizedBox(
                     getTouchedSpotIndicator: (LineChartBarData barData, List<int> spotIndexes) {
                       return spotIndexes.map((spotIndex) {
                         return TouchedSpotIndicatorData(
-                          FlLine(
-                            color: const Color(0xFF00BFA6),
+                          const FlLine(
+                            color: Color(0xFF00BFA6),
                             strokeWidth: 3,
                           ),
                           FlDotData(

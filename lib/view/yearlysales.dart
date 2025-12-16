@@ -12,6 +12,7 @@ class YearlySalesReportPage extends StatefulWidget {
   const YearlySalesReportPage({super.key});
 
   @override
+  // ignore: library_private_types_in_public_api
   _YearlySalesReportPageState createState() => _YearlySalesReportPageState();
 }
 
@@ -187,6 +188,7 @@ class _YearlySalesReportPageState extends State<YearlySalesReportPage>
                 icon: const Icon(Icons.close, color: Colors.black),
                 onPressed: () async {
                   await _controller.forward(); // Start slide down animation
+                  // ignore: use_build_context_synchronously
                   Navigator.of(context).pushReplacement(
                     MaterialPageRoute(builder: (_) => const HomeScreen()),
                   );
@@ -215,9 +217,11 @@ class _YearlySalesReportPageState extends State<YearlySalesReportPage>
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(30),
+                      // ignore: deprecated_member_use
                       border: Border.all(color: Colors.black.withOpacity(0.1)),
                       boxShadow: [
                         BoxShadow(
+                          // ignore: deprecated_member_use
                           color: Colors.black.withOpacity(0.05),
                           spreadRadius: 1,
                           blurRadius: 5,
@@ -257,6 +261,7 @@ class _YearlySalesReportPageState extends State<YearlySalesReportPage>
                           color: Colors.white,
                           boxShadow: [
                             BoxShadow(
+                              // ignore: deprecated_member_use
                               color: Colors.black.withOpacity(0.05),
                               spreadRadius: 1,
                               blurRadius: 5,

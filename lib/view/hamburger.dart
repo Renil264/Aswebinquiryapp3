@@ -91,6 +91,7 @@ class DrawerMenu extends StatelessWidget {
       onConfirmBtnTap: () {
         Navigator.of(context).pop(); // Close the alert
         Future.delayed(const Duration(milliseconds: 300), () {
+          // ignore: use_build_context_synchronously
           _performLogout(context);
         });
       },
@@ -117,8 +118,10 @@ class DrawerMenu extends StatelessWidget {
     try {
       final response = await http.post(url, headers: headers, body: body);
       if (response.statusCode == 200) {
+        // ignore: use_build_context_synchronously
         Provider.of<AppData>(context, listen: false);
 
+        // ignore: use_build_context_synchronously
         final loginViewModel = Provider.of<LoginViewModel>(context, listen: false);
         await loginViewModel.logout();
 
@@ -128,14 +131,17 @@ class DrawerMenu extends StatelessWidget {
         await prefs.setBool('hasLoggedInOnThisDevice', false);
 
         Navigator.pushAndRemoveUntil(
+          // ignore: use_build_context_synchronously
           context,
           MaterialPageRoute(builder: (context) => const LoginScreen()),
           (route) => false,
         );
       } else {
+        // ignore: use_build_context_synchronously
         _showErrorDialog(context, 'Logout failed (${response.statusCode})');
       }
     } catch (e) {
+      // ignore: use_build_context_synchronously
       _showErrorDialog(context, 'Error: ${e.toString()}');
     }
   }

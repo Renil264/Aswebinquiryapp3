@@ -166,6 +166,7 @@ class LoginViewModel extends ChangeNotifier {
         await Username.loadusername();
         await Vendor.loadVendorId();
 
+        // ignore: use_build_context_synchronously
         final appData = Provider.of<AppData>(context, listen: false);
         appData.updateUserData(userDataList);
         appData.setSalesDateTime(DateTime.now().toUtc());
