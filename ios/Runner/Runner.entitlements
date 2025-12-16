@@ -3,14 +3,13 @@
  "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-  <!-- Enable Push Notification -->
   <key>aps-environment</key>
-  <string>production</string> <!-- use "production" for App Store -->
+  <string>production</string>
 
-  <!-- Enable background mode
   <key>UIBackgroundModes</key>
   <array>
     <string>remote-notification</string>
-  </array> -->
+  </array>
 </dict>
 </plist>
+
