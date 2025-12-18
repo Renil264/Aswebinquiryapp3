@@ -7,6 +7,8 @@ import 'package:antiquewebemquiry/Global/username.dart';
 import 'package:antiquewebemquiry/Global/vendorid.dart';
 import 'package:antiquewebemquiry/app_data.dart';
 import 'package:antiquewebemquiry/view/splash_screen.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -31,15 +33,33 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 }
 
 Future<void> main() async {
+
   WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+
+  FlutterError.onError =
+      FirebaseCrashlytics.instance.recordFlutterFatalError;
+
+  PlatformDispatcher.instance.onError = (error, stack) {
+    FirebaseCrashlytics.instance.recordError(
+      error,
+      stack,
+      fatal: true,
+    );
+    return true;
+  };
+
   await Username.loadusername();
   await Vendor.loadVendorId();
-  await TotalSales.load(); // loads saved double into TotalSales.totalsales
+  await TotalSales.load();
   await TotalQuantity.load();
   await MonthlyTotalItems.load();
   await DailyTotalItems.load();
   await MonthlyTotalSales.load();
   await DailyTotalSales.load();
+
   runApp(const AntiqueSoftApp());
 }
 
@@ -93,20 +113,28 @@ class _AntiqueSoftAppState extends State<AntiqueSoftApp> {
         });
       }
       
-    } catch (e, stackTrace) {
-      // ignore: avoid_print
-      print('App initialization failed: $e');
-      // ignore: avoid_print
-      print('Stack trace: $stackTrace');
-      
-      if (mounted) {
-        setState(() {
-          _error = true;
-          _errorMessage = e.toString();
-        });
-      }
+      } catch (e, stackTrace) {
+    // Log to Firebase Crashlytics
+    FirebaseCrashlytics.instance.recordError(
+      e,
+      stackTrace,
+      fatal: true,
+      reason: 'App initialization failed',
+    );
+
+    // ignore: avoid_print
+    print('App initialization failed: $e');
+    // ignore: avoid_print
+    print('Stack trace: $stackTrace');
+
+    if (mounted) {
+      setState(() {
+        _error = true;
+        _errorMessage = e.toString();
+      });
     }
   }
+}
 
   Future<void> _setupPushNotifications() async {
     try {

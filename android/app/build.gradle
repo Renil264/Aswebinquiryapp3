@@ -1,18 +1,19 @@
 plugins {
     id "com.android.application"
-    id 'com.google.gms.google-services' // Only needed if using Firebase
     id "kotlin-android"
     id "dev.flutter.flutter-gradle-plugin"
+    id "com.google.gms.google-services"
+    id "com.google.firebase.crashlytics"
 }
 
-// ✅ Load key.properties for signing config
+// Load key.properties
 def keystoreProperties = new Properties()
 def keystorePropertiesFile = rootProject.file("key.properties")
 if (keystorePropertiesFile.exists()) {
     keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
 }
 
-// ✅ Load Flutter version info
+// Load Flutter version info
 def localProperties = new Properties()
 def localPropertiesFile = rootProject.file('local.properties')
 if (localPropertiesFile.exists()) {
@@ -21,15 +22,8 @@ if (localPropertiesFile.exists()) {
     }
 }
 
-def flutterVersionCode = localProperties.getProperty('flutter.versionCode')
-if (flutterVersionCode == null) {
-    flutterVersionCode = '10'
-}
-
-def flutterVersionName = localProperties.getProperty('flutter.versionName')
-if (flutterVersionName == null) {
-    flutterVersionName = '2.0'
-}
+def flutterVersionCode = localProperties.getProperty('flutter.versionCode') ?: '10'
+def flutterVersionName = localProperties.getProperty('flutter.versionName') ?: '2.0'
 
 android {
     namespace "com.esoftsys.antiquesoftwebinquiry"
@@ -58,7 +52,6 @@ android {
         versionName flutterVersionName
     }
 
-    // ✅ Signing Config for Release
     signingConfigs {
         release {
             keyAlias keystoreProperties['keyAlias']
@@ -68,13 +61,14 @@ android {
         }
     }
 
-    // ✅ Release Build Type using the signing config
     buildTypes {
         release {
             signingConfig signingConfigs.release
             minifyEnabled false
             shrinkResources false
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            proguardFiles getDefaultProguardFile(
+                'proguard-android-optimize.txt'
+            ), 'proguard-rules.pro'
         }
     }
 }

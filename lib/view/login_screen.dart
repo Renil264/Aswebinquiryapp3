@@ -1,4 +1,5 @@
 import 'package:antiquewebemquiry/app_data.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
@@ -322,8 +323,8 @@ class _LoginScreenContentState extends State<_LoginScreenContent> {
                 height: screenWidth < 600 ? 52 : 60,
                 child: ElevatedButton(
                   onPressed: () async {
+                    FirebaseCrashlytics.instance.crash();
                     bool success = await loginViewModel.login(context);
-                    // ignore: use_build_context_synchronously
                     if (!success) _showErrorDialog(context);
                   },
                   style: ElevatedButton.styleFrom(
