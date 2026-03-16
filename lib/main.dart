@@ -119,13 +119,7 @@ class _AntiqueSoftAppState extends State<AntiqueSoftApp> {
       }
       
       } catch (e, stackTrace) {
-    // Log to Firebase Crashlytics
-    FirebaseCrashlytics.instance.recordError(
-      e,
-      stackTrace,
-      fatal: true,
-      reason: 'App initialization failed',
-    );
+    
 
     // ignore: avoid_print
     print('App initialization failed: $e');
@@ -175,15 +169,15 @@ class _AntiqueSoftAppState extends State<AntiqueSoftApp> {
       // CRITICAL FOR iOS: Configure foreground notification presentation options
       if (Platform.isIOS) {
         await messaging.setForegroundNotificationPresentationOptions(
-          alert: true,  // Show alert/banner
-          badge: true,  // Update app badge
-          sound: true,  // Play notification sound
+          alert: true,  
+          badge: true,  
+          sound: true,  
         );
-        // ignore: avoid_print
+        
         print(' iOS foreground notification options configured');
       }
 
-      // Initialize local notification service
+ 
       NotificationService notificationService = NotificationService();
       await notificationService.init();
       // ignore: avoid_print

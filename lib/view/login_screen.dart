@@ -323,7 +323,6 @@ class _LoginScreenContentState extends State<_LoginScreenContent> {
                 height: screenWidth < 600 ? 52 : 60,
                 child: ElevatedButton(
                   onPressed: () async {
-                    FirebaseCrashlytics.instance.crash();
                     bool success = await loginViewModel.login(context);
                     if (!success) _showErrorDialog(context);
                   },

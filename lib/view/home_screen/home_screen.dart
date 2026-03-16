@@ -8,6 +8,7 @@ import 'package:antiquewebemquiry/view/hamburger.dart';
 import 'package:antiquewebemquiry/view/message.dart';
 // ignore: unused_import 
 import 'package:antiquewebemquiry/view/notification.dart';
+import 'package:antiquewebemquiry/view/notificationspage.dart';
 import 'package:antiquewebemquiry/view/popupmessage.dart';
 import 'package:antiquewebemquiry/view/salesreport.dart';
 import 'package:antiquewebemquiry/viewmodel/home_viewmodel.dart';
@@ -488,8 +489,7 @@ Future<void> _fetchYearlySalesData() async {
       }
       
       // Create spots for all 12 months, using 0 for months with no data
-      List<String> monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 
-                                'July', 'August', 'September', 'October', 'November', 'December'];
+      List<String> monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
       
       for (int i = 0; i < monthNames.length; i++) {
         String monthName = monthNames[i];
@@ -550,40 +550,40 @@ Future<void> _fetchDailySalesData() async {
       final Map<String, dynamic> data = json.decode(response.body);
       final List<dynamic> dailySales = data['dailySales'];
       
-      // Clear existing data
+
       dailySalesSpots.clear();
       dailySalesLabels.clear();
       dailySalesFullLabels.clear();
       
-      // Sort the data by date to ensure proper order
+
       dailySales.sort((a, b) {
         final dateA = DateTime.parse(a['date']);
         final dateB = DateTime.parse(b['date']);
         return dateA.compareTo(dateB);
       });
       
-      // Process the API response
+
       for (int i = 0; i < dailySales.length; i++) {
         final salesData = dailySales[i];
         final double totalSales = (salesData['totalSales'] ?? 0).toDouble();
         final String date = salesData['date'] ?? '';
         final String day = salesData['day'] ?? '';
         
-        // Format: "Sun\n(July 1)\n2025" - Day abbreviation, date in brackets, year
+
         final String dayAbbr = _getDayAbbreviation(day);
         final String simpleLabel = dayAbbr;
 
-      // Full label for tooltip
+
         final DateTime parsedDate = DateTime.parse(date);
         final String monthName = _getMonthName(parsedDate.month);
         final String fullLabel = '$dayAbbr\n($monthName ${parsedDate.day})\n${parsedDate.year}';
 
         dailySalesSpots.add(FlSpot(i.toDouble(), totalSales));
-        dailySalesLabels.add(simpleLabel); // Simple for X-axis
+        dailySalesLabels.add(simpleLabel);
         dailySalesFullLabels.add(fullLabel); 
       }
       
-      // Set fixed max Y value to 100
+
       maxDailySales = 100.0;
       
       setState(() {
@@ -599,7 +599,7 @@ Future<void> _fetchDailySalesData() async {
     setState(() {
       isLoadingDailySales = false;
     });
-    print('Error: $e'); // Debug print
+    print('Error: $e'); 
     debugPrint('Error loading daily sales data: ${e.toString()}');
   }
 }
@@ -825,6 +825,19 @@ Future<void> _fetchMonthlySalesData() async {
                         const Spacer(),
                         Row(
                           children: [
+
+                            IconButton(
+                            icon: const Icon(Icons.notifications_outlined),
+                            color: Colors.black,
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) => NotificationScreen(), // ← your notification page
+                                ),
+                              );
+                            },
+                          ),
                             Stack(
                               children: [
                                 IconButton(
@@ -832,6 +845,7 @@ Future<void> _fetchMonthlySalesData() async {
                                   color: Colors.black,
                                   onPressed: _navigateToMessagePage,
                                 ),
+                                
                                 Positioned(
                                   right: 9,
                                   top: 11,

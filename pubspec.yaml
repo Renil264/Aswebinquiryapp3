@@ -32,6 +32,7 @@ dependencies:
   firebase_messaging:
     path: my_plugins/firebase_messaging
   firebase_crashlytics: ^3.4.9
+  dio: ^5.9.0
 
 dev_dependencies:
   flutter_test:
