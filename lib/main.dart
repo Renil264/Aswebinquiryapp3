@@ -6,44 +6,61 @@ import 'package:antiquewebemquiry/Global/username.dart';
 import 'package:antiquewebemquiry/Global/vendorid.dart';
 import 'package:antiquewebemquiry/app_data.dart';
 import 'package:antiquewebemquiry/view/splash_screen.dart';
-
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:provider/provider.dart';
 import 'dart:io' show Platform;
-import 'Services/notification.dart';
 import 'viewmodel/login_viewmodel.dart';
 
-// Background message handler
+// ✅ Firebase imports ONLY for Android
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'Services/notification.dart';
+
+// Background message handler - Android only
 @pragma('vm:entry-point')
-// Ensures Android handles background properly
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   try {
-    await Firebase.initializeApp();
-    // ignore: avoid_print
-    print(' Background message received: ${message.messageId}');
-    NotificationService().showNotification(message);
+    if (Platform.isAndroid) {
+      print('🔔 Background message: ${message.messageId}');
+      NotificationService().showNotification(message);
+    }
   } catch (e) {
-    // ignore: avoid_print
-    print(' Background message handler error: $e');
+    print('❌ Background handler error: $e');
   }
 }
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
+  // ✅ Initialize Firebase ONLY on Android
+  try {
+    if (Platform.isAndroid) {
+      await Firebase.initializeApp(
+        options: DefaultFirebaseOptions.currentPlatform,
+      );
+      print('✅ Firebase initialized on Android');
+      
+      FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+    }
+  } catch (e) {
+    print('⚠️ Firebase initialization error: $e');
+    // Continue even if Firebase fails - app still works
+  }
 
-
-  await Username.loadusername();
-  await Vendor.loadVendorId();
-  await TotalSales.load();
-  await TotalQuantity.load();
-  await MonthlyTotalItems.load();
-  await DailyTotalItems.load();
-  await MonthlyTotalSales.load();
-  await DailyTotalSales.load();
+  // Load user data
+  try {
+    await Username.loadusername();
+    await Vendor.loadVendorId();
+    await TotalSales.load();
+    await TotalQuantity.load();
+    await MonthlyTotalItems.load();
+    await DailyTotalItems.load();
+    await MonthlyTotalSales.load();
+    await DailyTotalSales.load();
+    print('✅ User data loaded');
+  } catch (e) {
+    print('⚠️ Error loading user data: $e');
+  }
 
   runApp(const AntiqueSoftApp());
 }
@@ -62,154 +79,109 @@ class _AntiqueSoftAppState extends State<AntiqueSoftApp> {
   @override
   void initState() {
     super.initState();
-    _initializeApp();
+    _initializeNotifications();
   }
 
-  Future<void> _initializeApp() async {
+  Future<void> _initializeNotifications() async {
     try {
-      // ✅ FIREBASE SETUP ONLY ON ANDROID
+      // ✅ Setup push notifications ONLY on Android
       if (Platform.isAndroid) {
-        // ignore: avoid_print
-        print('Initializing Firebase on Android...');
-        
-        // Initialize Firebase with timeout
-        await Firebase.initializeApp(
-          options: DefaultFirebaseOptions.currentPlatform,
-        ).timeout(
-          const Duration(seconds: 30),
-          onTimeout: () {
-            throw Exception('Firebase initialization timed out after 30 seconds');
-          },
-        );
-        
-        // ignore: avoid_print
-        print('Firebase initialized successfully');
-
-        // Setup FCM background message handler
-        FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
-        // ignore: avoid_print
-        print('Background message handler set');
+        await _setupAndroidPushNotifications();
+        print('✅ Android push notifications ready');
       } else {
-        // ignore: avoid_print
-        print('iOS detected - Skipping Firebase initialization');
-      }
-
-      // Setup push notifications (Android only)
-      if (Platform.isAndroid) {
-        await _setupPushNotifications();
-        // ignore: avoid_print
-        print('Push notifications setup complete');
+        print('ℹ️ iOS detected - Firebase push notifications skipped');
       }
 
       if (mounted) {
-        setState(() {
-        });
+        setState(() {});
       }
-      
-    } catch (e, stackTrace) {
-      // ignore: avoid_print
-      print('App initialization failed: $e');
-      // ignore: avoid_print
-      print('Stack trace: $stackTrace');
-
+    } catch (e) {
+      print('⚠️ Notification initialization error: $e');
+      // Don't crash - app continues without notifications
       if (mounted) {
         setState(() {
           _error = true;
-          _errorMessage = e.toString();
+          _errorMessage = 'Notification setup error (app will still work): $e';
         });
       }
     }
   }
 
-  Future<void> _setupPushNotifications() async {
+  Future<void> _setupAndroidPushNotifications() async {
     try {
-      // ✅ THIS ONLY RUNS ON ANDROID
+      // Only setup if platform is Android
       if (!Platform.isAndroid) {
         return;
       }
 
-      FirebaseMessaging messaging = FirebaseMessaging.instance;
+      final messaging = FirebaseMessaging.instance;
 
-      NotificationSettings settings = await messaging.requestPermission(
+      // Request notification permission
+      final settings = await messaging.requestPermission(
         alert: true,
         badge: true,
         sound: true,
-        announcement: false,
-        carPlay: false,
-        criticalAlert: false,
-        provisional: false,
       );
 
-      // ignore: avoid_print
-      print('Android permission status: ${settings.authorizationStatus}');
+      print('📱 Android permission status: ${settings.authorizationStatus}');
 
-      if (settings.authorizationStatus == AuthorizationStatus.authorized) {
-        // ignore: avoid_print
-        print('Notification permissions granted');
-      } else if (settings.authorizationStatus == AuthorizationStatus.provisional) {
-        // ignore: avoid_print
-        print('Provisional notification permissions granted');
-      } else {
-        // ignore: avoid_print
-        print('Notification permissions denied');
-      }
-
+      // Initialize notification service
       NotificationService notificationService = NotificationService();
       await notificationService.init();
-      // ignore: avoid_print
-      print('Local notification service initialized');
+      print('✅ Notification service initialized');
 
       // Get FCM token
       try {
         String? token = await messaging.getToken();
-        // ignore: avoid_print
-        print('FCM Token: ${token ?? 'No token received'}');
+        if (token != null) {
+          print('📲 FCM Token: ${token.substring(0, 30)}...');
+        } else {
+          print('⚠️ FCM Token is null');
+        }
       } catch (e) {
-        // ignore: avoid_print
-        print('Failed to get FCM token: $e');
+        print('⚠️ Failed to get FCM token: $e');
       }
 
       // Listen for foreground messages
       FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
-        // ignore: avoid_print
-        print('Foreground message received: ${message.notification?.title}');
-
         try {
+          print('📬 Foreground message: ${message.notification?.title}');
           if (message.notification != null) {
             await notificationService.showNotification(message);
           }
         } catch (e) {
-          // ignore: avoid_print
-          print('Failed to show notification: $e');
+          print('⚠️ Failed to show notification: $e');
         }
       });
 
-      // Listen for when user taps notification while app is in background
+      // Listen for message tap (app in background)
       FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-        // ignore: avoid_print
-        print('App opened from notification: ${message.notification?.title}');
-        // Handle navigation here if needed
+        try {
+          print('👆 App opened from notification: ${message.notification?.title}');
+        } catch (e) {
+          print('⚠️ Error handling notification tap: $e');
+        }
       });
 
-      // Handle initial message when app is launched from terminated state
-      RemoteMessage? initialMessage = await messaging.getInitialMessage();
-      if (initialMessage != null) {
-        // ignore: avoid_print
-        print('App launched from notification: ${initialMessage.notification?.title}');
-        // Handle navigation here if needed
+      // Check if app was launched from notification
+      try {
+        RemoteMessage? initialMessage = await messaging.getInitialMessage();
+        if (initialMessage != null) {
+          print('🚀 App launched from notification');
+        }
+      } catch (e) {
+        print('⚠️ Error checking initial message: $e');
       }
-
     } catch (e) {
-      // ignore: avoid_print
-      print('Push notification setup failed: $e');
-      // Don't throw here, just log the error
+      print('❌ Android push notification setup failed: $e');
+      // Don't throw - let app continue
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    // Error state
-    if (_error) {
+    // Only show error if it's critical
+    if (_error && _errorMessage.contains('critical')) {
       return MaterialApp(
         title: 'AntiqueSoft',
         debugShowCheckedModeBanner: false,
@@ -221,28 +193,17 @@ class _AntiqueSoftAppState extends State<AntiqueSoftApp> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Icon(
-                    Icons.error_outline,
-                    color: Colors.red,
-                    size: 64,
-                  ),
+                  const Icon(Icons.error_outline, color: Colors.red, size: 64),
                   const SizedBox(height: 16),
                   const Text(
-                    'Initialization Failed',
-                    style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.red,
-                    ),
+                    'Error',
+                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.red),
                   ),
                   const SizedBox(height: 16),
                   Text(
                     _errorMessage,
                     textAlign: TextAlign.center,
-                    style: const TextStyle(
-                      fontSize: 14,
-                      color: Colors.grey,
-                    ),
+                    style: const TextStyle(fontSize: 14, color: Colors.grey),
                   ),
                   const SizedBox(height: 24),
                   ElevatedButton(
@@ -251,7 +212,7 @@ class _AntiqueSoftAppState extends State<AntiqueSoftApp> {
                         _error = false;
                         _errorMessage = '';
                       });
-                      _initializeApp();
+                      _initializeNotifications();
                     },
                     child: const Text('Retry'),
                   ),
@@ -262,7 +223,8 @@ class _AntiqueSoftAppState extends State<AntiqueSoftApp> {
         ),
       );
     }
-    
+
+    // Normal app
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => LoginViewModel()),
